@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import ApiError from "../utils/ApiError";
+import ApiError from "../utils/ApiError.js";
 
 const ledgerSchema = new Schema(
   {
@@ -11,7 +11,7 @@ const ledgerSchema = new Schema(
       immutable: true,
     },
     amount: {
-      type: Numbar,
+      type: Number,
       required: [true, "Amount is required for Creating a Ledger Entry."],
       immutable: true,
     },

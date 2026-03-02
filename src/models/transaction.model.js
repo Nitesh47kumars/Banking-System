@@ -20,7 +20,7 @@ const transactionSchema = new Schema(
         values: ["PENDING", "COMPLETED", "FAILED", "REVERSED"],
         message: "Status can be either PENDING, COMPLETE, FAILED, REVERSED.",
       },
-      default: "Pending",
+      default: "PENDING",
     },
     amount: {
       type: Number,

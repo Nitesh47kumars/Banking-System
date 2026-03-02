@@ -131,7 +131,7 @@ const createTransaction = asyncHandler(async (req, res) => {
       { session }
     );
 
-    transaction.status = "COMPELTED";
+    transaction.status = "COMPLETED";
 
     await transaction.save({ session });
     await session.commitTransaction();
@@ -157,7 +157,6 @@ const createTransaction = asyncHandler(async (req, res) => {
 
 const createInitialFundsTransaction = asyncHandler(async (req, res) => {
   const { toAccount, amount, idempotencyKey } = req.body;
-  console.log(req.body);
 
   if (!toAccount || !amount || !idempotencyKey) {
     throw new ApiError(
@@ -166,7 +165,9 @@ const createInitialFundsTransaction = asyncHandler(async (req, res) => {
     );
   }
 
-  const toUserAccount = await accountModel.findById(toAccount);
+  const toUserAccount = await accountModel.findOne({ _id: toAccount });
+
+  console.log(toUserAccount);
 
   if (!toUserAccount) {
     throw new ApiError(400, "Invalid Credential, User Not Found!");
@@ -177,7 +178,6 @@ const createInitialFundsTransaction = asyncHandler(async (req, res) => {
   }
 
   const fromUserAccount = await accountModel.findOne({
-    systemUser: true,
     user: req.user._id,
   });
 
@@ -188,15 +188,13 @@ const createInitialFundsTransaction = asyncHandler(async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
-  const transaction = new transactionModel(
-    {
-      fromAccount: fromUserAccount._id,
-      toAccount,
-      amount,
-      idempotencyKey,
-      status: "PENDING",
-    }
-  );
+  const transaction = new transactionModel({
+    fromAccount: fromUserAccount._id,
+    toAccount,
+    status: "PENDING",
+    amount,
+    idempotencyKey,
+  });
 
   const debitLedgerEntry = await ledgerModel.create(
     [
@@ -222,7 +220,7 @@ const createInitialFundsTransaction = asyncHandler(async (req, res) => {
     { session }
   );
 
-  transaction.status = "COMPELTED";
+  transaction.status = "COMPLETED";
   await transaction.save({ session });
 
   await session.commitTransaction();
@@ -230,7 +228,13 @@ const createInitialFundsTransaction = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .json(201, transaction, "Initial Funds Transaction Completed Successfully");
+    .json(
+      new ApiResponse(
+        201,
+        transaction,
+        "Initial Funds Transaction Completed Successfully"
+      )
+    );
 });
 
 export { createTransaction, createInitialFundsTransaction };

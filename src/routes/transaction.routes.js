@@ -1,6 +1,12 @@
 import { Router } from "express";
-import authMiddleware from "../middlewares/auth.middleware.js";
-import { createTransaction } from "../controllers/transaction.controller.js";
+import {
+  authMiddleware,
+  authSystemUserMiddleware,
+} from "../middlewares/auth.middleware.js";
+import {
+  createTransaction,
+  createInitialFundsTransaction,
+} from "../controllers/transaction.controller.js";
 
 const transactionRoutes = Router();
 
@@ -10,5 +16,10 @@ const transactionRoutes = Router();
  */
 
 transactionRoutes.post("/", authMiddleware, createTransaction);
+transactionRoutes.post(
+  "/system/initial-funds",
+  authSystemUserMiddleware,
+  createInitialFundsTransaction
+);
 
 export default transactionRoutes;

@@ -1,10 +1,10 @@
-import {sendTransactionSuccessEmail} from "../services/email.service.js";
+import { sendTransactionSuccessEmail } from "../services/email.service.js";
 import ApiError from "../utils/ApiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
-import {accountModel} from "../models/account.model.js";
+import { accountModel } from "../models/account.model.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import { transactionModel } from "../models/transaction.model.js";
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 import { ledgerModel } from "../models/ledger.model.js";
 
 const createTransaction = asyncHandler(async (req, res) => {
@@ -24,11 +24,8 @@ const createTransaction = asyncHandler(async (req, res) => {
   const fromUserAccount = await accountModel.findOne({ _id: fromAccount });
   const toUserAccount = await accountModel.findOne({ _id: toAccount });
 
-  if (fromUserAccount !== "ACTIVE" || toUserAccount !== "ACTIVE") {
-    throw new ApiError(
-      400,
-      "Both fromUserAccount and toUserAccount are Required!"
-    );
+  if (!fromAccount || !toAccount) {
+    throw new ApiError(400, "Invalid fromAccount and toAccount!");
   }
 
   /**
@@ -107,8 +104,8 @@ const createTransaction = asyncHandler(async (req, res) => {
       {
         fromAccount,
         toAccount,
-        status: "PENDING",
         amount,
+        status: "PENDING",
         idempotencyKey,
       },
       { session }
@@ -134,7 +131,7 @@ const createTransaction = asyncHandler(async (req, res) => {
       { session }
     );
 
-    transaction.status = "COMPLETED";
+    transaction.status = "COMPELTED";
 
     await transaction.save({ session });
     await session.commitTransaction();
@@ -148,16 +145,92 @@ const createTransaction = asyncHandler(async (req, res) => {
 
     return res
       .status(201)
-      .json(
-        new ApiResponse(201, transaction, "Transaction Completed Successfully")
-      );
+      .json(new ApiResponse(201, transaction, "Transaction Successful."));
   } catch (err) {
     console.log("Message:", err);
     await session.abortTransaction();
-    throw new ApiError(500, "Transaction Failed, Something went Wrong!");
+    throw new ApiError(500, "Transaction Failed! Something Went Wrong.");
   } finally {
-    session.endSession();
+    await session.endSession();
   }
 });
 
-export {createTransaction}
+const createInitialFundsTransaction = asyncHandler(async (req, res) => {
+  const { toAccount, amount, idempotencyKey } = req.body;
+  console.log(req.body);
+
+  if (!toAccount || !amount || !idempotencyKey) {
+    throw new ApiError(
+      400,
+      "toAccount, amount, idempotencyKey All is Required!"
+    );
+  }
+
+  const toUserAccount = await accountModel.findById(toAccount);
+
+  if (!toUserAccount) {
+    throw new ApiError(400, "Invalid Credential, User Not Found!");
+  }
+
+  if (toUserAccount.status !== "ACTIVE") {
+    throw new ApiError(400, "toUserAccount is not ACTIVE!");
+  }
+
+  const fromUserAccount = await accountModel.findOne({
+    systemUser: true,
+    user: req.user._id,
+  });
+
+  if (!fromUserAccount) {
+    throw new ApiError(400, "SystemUser Account not Found");
+  }
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  const transaction = new transactionModel(
+    {
+      fromAccount: fromUserAccount._id,
+      toAccount,
+      amount,
+      idempotencyKey,
+      status: "PENDING",
+    }
+  );
+
+  const debitLedgerEntry = await ledgerModel.create(
+    [
+      {
+        account: fromUserAccount._id,
+        amount: amount,
+        transaction: transaction._id,
+        type: "DEBIT",
+      },
+    ],
+    { session }
+  );
+
+  const creditLedgerEntry = await ledgerModel.create(
+    [
+      {
+        account: toUserAccount._id,
+        amount: amount,
+        transaction: transaction._id,
+        type: "CREDIT",
+      },
+    ],
+    { session }
+  );
+
+  transaction.status = "COMPELTED";
+  await transaction.save({ session });
+
+  await session.commitTransaction();
+  session.endSession();
+
+  return res
+    .status(201)
+    .json(201, transaction, "Initial Funds Transaction Completed Successfully");
+});
+
+export { createTransaction, createInitialFundsTransaction };

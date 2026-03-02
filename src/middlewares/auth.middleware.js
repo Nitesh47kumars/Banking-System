@@ -17,11 +17,34 @@ const authMiddleware = asyncHandler(async (req, _, next) => {
 
     req.user = user;
 
-    return next()
+    return next();
   } catch (err) {
     throw new ApiError(401, "Unauthorized Access! Token is Invalid");
   }
 });
 
+const authSystemUserMiddleware = asyncHandler(async (req, _, next) => {
+  const token =
+    req.cookies.token || req.headers?.authorization.split(" ")[1];
 
-export default authMiddleware;
+  if (!token) {
+    throw new ApiError(400, "Unauthorized! Token Not Found.");
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const user = await userModel.findById(decoded._id).select("+systemuser");
+    if (!user) {
+      throw new ApiError(403, "Forbidden! Not a system User.");
+    }
+
+    req.user = user;
+
+    return next();
+  } catch (e) {
+    console.log("Message:", e);
+    throw new ApiError(500, "Something Went Wrong!");
+  }
+});
+
+export { authMiddleware, authSystemUserMiddleware };

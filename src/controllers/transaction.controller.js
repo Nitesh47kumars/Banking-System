@@ -97,62 +97,56 @@ const createTransaction = asyncHandler(async (req, res) => {
    */
 
   const session = await mongoose.startSession();
-  try {
-    session.startTransaction();
+  session.startTransaction();
 
-    const transaction = await transactionModel.create(
-      {
-        fromAccount,
-        toAccount,
-        amount,
-        status: "PENDING",
-        idempotencyKey,
-      },
-      { session }
-    );
+  const transaction = new transactionModel({
+    fromAccount,
+    toAccount,
+    amount,
+    status: "PENDING",
+    idempotencyKey,
+  });
 
-    const debitLedgerEntry = await ledgerModel.create(
+  const debitLedgerEntry = await ledgerModel.create(
+    [
       {
         account: fromAccount,
         amount: amount,
         transaction: transaction._id,
         type: "DEBIT",
       },
-      { session }
-    );
+    ],
+    { session }
+  );
 
-    const creditLedgerEntry = await ledgerModel.create(
+  const creditLedgerEntry = await ledgerModel.create(
+    [
       {
         account: toAccount,
         amount: amount,
         transaction: transaction._id,
         type: "CREDIT",
       },
-      { session }
-    );
+    ],
+    { session }
+  );
 
-    transaction.status = "COMPLETED";
+  transaction.status = "COMPLETED";
 
-    await transaction.save({ session });
-    await session.commitTransaction();
+  await transaction.save({ session });
+  await session.commitTransaction();
 
-    await sendTransactionSuccessEmail(
-      req.user.email,
-      req.user.name,
-      amount,
-      toAccount
-    );
+  await sendTransactionSuccessEmail(
+    req.user.email,
+    req.user.name,
+    amount,
+    toAccount
+  );
+  await session.endSession();
 
-    return res
-      .status(201)
-      .json(new ApiResponse(201, transaction, "Transaction Successful."));
-  } catch (err) {
-    console.log("Message:", err);
-    await session.abortTransaction();
-    throw new ApiError(500, "Transaction Failed! Something Went Wrong.");
-  } finally {
-    await session.endSession();
-  }
+  return res
+    .status(201)
+    .json(new ApiResponse(201, transaction, "Transaction Successful."));
 });
 
 const createInitialFundsTransaction = asyncHandler(async (req, res) => {

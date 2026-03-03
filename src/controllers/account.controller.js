@@ -24,6 +24,7 @@ const getAccountBalance = asyncHandler(async (req, res) => {
   const { accountId } = req.params;
 
   const account = await accountModel.findOne({
+    _id: accountId,
     user: req.user._id,
   });
 

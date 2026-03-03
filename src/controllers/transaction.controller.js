@@ -24,7 +24,7 @@ const createTransaction = asyncHandler(async (req, res) => {
   const fromUserAccount = await accountModel.findOne({ _id: fromAccount });
   const toUserAccount = await accountModel.findOne({ _id: toAccount });
 
-  if (!fromAccount || !toAccount) {
+  if (!fromUserAccount || !toUserAccount) {
     throw new ApiError(400, "Invalid fromAccount and toAccount!");
   }
 
@@ -37,9 +37,9 @@ const createTransaction = asyncHandler(async (req, res) => {
   });
 
   if (isTransactionAlreadyExist) {
-    if (isTransactionAlreadyExist === "COMPELTED") {
+    if (isTransactionAlreadyExist.status === "COMPLETED") {
       return res
-        .status(201)
+        .status(200)
         .json(
           new ApiResponse(
             201,
@@ -48,16 +48,16 @@ const createTransaction = asyncHandler(async (req, res) => {
           )
         );
     }
-    if (isTransactionAlreadyExist === "PENDING") {
-      throw ApiError(401, "Transaction Already in Process...");
+    if (isTransactionAlreadyExist.status === "PENDING") {
+      throw new ApiError(401, "Transaction Already in Process...");
     }
-    if (isTransactionAlreadyExist === "Failed") {
+    if (isTransactionAlreadyExist.status === "Failed") {
       throw new ApiError(
         500,
         "Transaction Processing Failed! Please Try Again"
       );
     }
-    if (isTransactionAlreadyExist === "Reversed") {
+    if (isTransactionAlreadyExist.status === "Reversed") {
       throw new ApiError(
         400,
         "Transaction Processing Reversed! Please Try Again"
@@ -96,45 +96,66 @@ const createTransaction = asyncHandler(async (req, res) => {
    *  5.
    */
 
-  const session = await mongoose.startSession();
-  session.startTransaction();
+  let transaction;
 
-  const transaction = new transactionModel({
-    fromAccount,
-    toAccount,
-    amount,
-    status: "PENDING",
-    idempotencyKey,
-  });
+  try {
+    const session = await mongoose.startSession();
+    session.startTransaction();
 
-  const debitLedgerEntry = await ledgerModel.create(
-    [
-      {
-        account: fromAccount,
-        amount: amount,
-        transaction: transaction._id,
-        type: "DEBIT",
-      },
-    ],
-    { session }
-  );
+    transaction = (
+      await transactionModel.create(
+        [
+          {
+            fromAccount,
+            toAccount,
+            amount,
+            status: "PENDING",
+            idempotencyKey,
+          },
+        ],
+        { session }
+      )
+    )[0];
 
-  const creditLedgerEntry = await ledgerModel.create(
-    [
-      {
-        account: toAccount,
-        amount: amount,
-        transaction: transaction._id,
-        type: "CREDIT",
-      },
-    ],
-    { session }
-  );
+    const debitLedgerEntry = await ledgerModel.create(
+      [
+        {
+          account: fromAccount,
+          amount: amount,
+          transaction: transaction._id,
+          type: "DEBIT",
+        },
+      ],
+      { session }
+    );
 
-  transaction.status = "COMPLETED";
+    await (() => {
+      return new Promise((resolve) => setTimeout(resolve, 10 * 1000));
+    })();
 
-  await transaction.save({ session });
-  await session.commitTransaction();
+    const creditLedgerEntry = await ledgerModel.create(
+      [
+        {
+          account: toAccount,
+          amount: amount,
+          transaction: transaction._id,
+          type: "CREDIT",
+        },
+      ],
+      { session }
+    );
+
+    await transactionModel.findByIdAndUpdate(
+      { _id: transaction._id },
+      { status: "COMPLETED" },
+      { session }
+    );
+
+    await session.commitTransaction();
+    await session.endSession();
+  } catch (e) {
+    throw new ApiError(400, "Transaction is PENDING due to Some Issue");
+  }
 
   await sendTransactionSuccessEmail(
     req.user.email,
@@ -142,7 +163,6 @@ const createTransaction = asyncHandler(async (req, res) => {
     amount,
     toAccount
   );
-  await session.endSession();
 
   return res
     .status(201)

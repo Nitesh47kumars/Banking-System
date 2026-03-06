@@ -51,13 +51,13 @@ const createTransaction = asyncHandler(async (req, res) => {
     if (isTransactionAlreadyExist.status === "PENDING") {
       throw new ApiError(401, "Transaction Already in Process...");
     }
-    if (isTransactionAlreadyExist.status === "Failed") {
+    if (isTransactionAlreadyExist.status === "FAILED") {
       throw new ApiError(
         500,
         "Transaction Processing Failed! Please Try Again"
       );
     }
-    if (isTransactionAlreadyExist.status === "Reversed") {
+    if (isTransactionAlreadyExist.status === "REVERSED") {
       throw new ApiError(
         400,
         "Transaction Processing Reversed! Please Try Again"
@@ -75,7 +75,7 @@ const createTransaction = asyncHandler(async (req, res) => {
   ) {
     throw new ApiError(
       400,
-      "Both fromAccount and toAccount must be ACtive to process Transaction."
+      "Both fromAccount and toAccount must be Active to process Transaction."
     );
   }
 
@@ -128,10 +128,6 @@ const createTransaction = asyncHandler(async (req, res) => {
       ],
       { session }
     );
-
-    await (() => {
-      return new Promise((resolve) => setTimeout(resolve, 10 * 1000));
-    })();
 
     const creditLedgerEntry = await ledgerModel.create(
       [

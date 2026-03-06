@@ -3,7 +3,7 @@ import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { sendRegisterationEmail } from "../services/email.service.js";
-
+import { tokenBlacklistModel } from "../models/blacklist.model.js";
 /**
  * - User Register Controller
  * - POST /api/auth/register
@@ -74,4 +74,28 @@ const userLoginController = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, loginUser, "Login Successfully."));
 });
 
-export { userRegisterationController, userLoginController };
+/**
+ *  - User Logout Controller
+ *  - POST /api/auth/logout
+ */
+const userLogoutController = asyncHandler(async (req, res) => {
+  const token = req.cookies.token || req.header.authorization?.split(" ")[1];
+
+  if (!token) {
+    throw new ApiError(400, "user Already logged-Out");
+  }
+
+  res.clearCookie("token");
+
+  await tokenBlacklistModel.create({
+    token: token,
+  });
+
+  res.status(200).json(new ApiResponse(200, "User Logout Successfully."));
+});
+
+export {
+  userRegisterationController,
+  userLoginController,
+  userLogoutController,
+};

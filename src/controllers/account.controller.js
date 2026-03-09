@@ -6,6 +6,12 @@ import asyncHandler from "../utils/asyncHandler.js";
 const createAccountController = asyncHandler(async (req, res) => {
   const user = req.user;
 
+  const existingAccount = await accountModel.findOne({ user: user._id });
+
+  if (existingAccount) {
+    throw new ApiError(409, "Account already exists for this user.");
+  }
+
   const account = await accountModel.create({ user: user._id });
 
   res
@@ -25,7 +31,6 @@ const getAccountBalance = asyncHandler(async (req, res) => {
 
   const account = await accountModel.findOne({
     _id: accountId,
-    user: req.user._id,
   });
 
   if (!account) {
@@ -33,10 +38,9 @@ const getAccountBalance = asyncHandler(async (req, res) => {
   }
 
   const balance = await account.getBalance();
-  console.log(balance)
   return res
     .status(200)
-    .json(new ApiResponse(200, {balance}, "Balance Fetched Successfully"));
+    .json(new ApiResponse(200, { balance }, "Balance Fetched Successfully"));
 });
 
 export { createAccountController, getAllAccounts, getAccountBalance };

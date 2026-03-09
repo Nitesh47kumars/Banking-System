@@ -1,4 +1,7 @@
-import { sendTransactionSuccessEmail } from "../services/email.service.js";
+import {
+  sendTransactionFailEmail,
+  sendTransactionSuccessEmail,
+} from "../services/email.service.js";
 import ApiError from "../utils/ApiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { accountModel } from "../models/account.model.js";
@@ -17,12 +20,20 @@ const createTransaction = asyncHandler(async (req, res) => {
   if (!fromAccount || !toAccount || !amount || !idempotencyKey) {
     throw new ApiError(
       400,
-      "fromAccount, toAccount, Amount and idempotency all are Required!"
+      "fromAccount, toAccount, Amount and idempotencyKey all are Required!"
     );
   }
 
-  const fromUserAccount = await accountModel.findOne({ _id: fromAccount });
-  const toUserAccount = await accountModel.findOne({ _id: toAccount });
+  if (amount <= 0) {
+    throw new ApiError(400, "Amount must be greater than zero");
+  }
+
+  if (fromAccount === toAccount) {
+    throw new ApiError(400, "Cannot transfer to same account");
+  }
+
+  const fromUserAccount = await accountModel.findById(fromAccount);
+  const toUserAccount = await accountModel.findById(toAccount);
 
   if (!fromUserAccount || !toUserAccount) {
     throw new ApiError(400, "Invalid fromAccount and toAccount!");
@@ -49,7 +60,7 @@ const createTransaction = asyncHandler(async (req, res) => {
         );
     }
     if (isTransactionAlreadyExist.status === "PENDING") {
-      throw new ApiError(401, "Transaction Already in Process...");
+      throw new ApiError(409, "Transaction Already in Process...");
     }
     if (isTransactionAlreadyExist.status === "FAILED") {
       throw new ApiError(
@@ -96,7 +107,7 @@ const createTransaction = asyncHandler(async (req, res) => {
    *  5.
    */
 
-  let transaction;
+  let transaction = null;
 
   try {
     const session = await mongoose.startSession();
@@ -117,7 +128,7 @@ const createTransaction = asyncHandler(async (req, res) => {
       )
     )[0];
 
-    const debitLedgerEntry = await ledgerModel.create(
+    await ledgerModel.create(
       [
         {
           account: fromAccount,
@@ -129,7 +140,11 @@ const createTransaction = asyncHandler(async (req, res) => {
       { session }
     );
 
-    const creditLedgerEntry = await ledgerModel.create(
+    await (() => {
+      return new Promise((resolve) => setTimeout(resolve, 15 * 1000));
+    })();
+
+    await ledgerModel.create(
       [
         {
           account: toAccount,
@@ -142,7 +157,7 @@ const createTransaction = asyncHandler(async (req, res) => {
     );
 
     await transactionModel.findByIdAndUpdate(
-      { _id: transaction._id },
+      transaction._id,
       { status: "COMPLETED" },
       { session }
     );
@@ -177,8 +192,6 @@ const createInitialFundsTransaction = asyncHandler(async (req, res) => {
 
   const toUserAccount = await accountModel.findOne({ _id: toAccount });
 
-  console.log(toUserAccount);
-
   if (!toUserAccount) {
     throw new ApiError(400, "Invalid Credential, User Not Found!");
   }
@@ -196,55 +209,73 @@ const createInitialFundsTransaction = asyncHandler(async (req, res) => {
   }
 
   const session = await mongoose.startSession();
-  session.startTransaction();
 
-  const transaction = new transactionModel({
-    fromAccount: fromUserAccount._id,
-    toAccount,
-    status: "PENDING",
-    amount,
-    idempotencyKey,
-  });
+  let transaction = null;
 
-  const debitLedgerEntry = await ledgerModel.create(
-    [
-      {
-        account: fromUserAccount._id,
-        amount: amount,
-        transaction: transaction._id,
-        type: "DEBIT",
-      },
-    ],
-    { session }
-  );
+  try {
+    session.startTransaction();
 
-  const creditLedgerEntry = await ledgerModel.create(
-    [
-      {
-        account: toUserAccount._id,
-        amount: amount,
-        transaction: transaction._id,
-        type: "CREDIT",
-      },
-    ],
-    { session }
-  );
-
-  transaction.status = "COMPLETED";
-  await transaction.save({ session });
-
-  await session.commitTransaction();
-  session.endSession();
-
-  return res
-    .status(201)
-    .json(
-      new ApiResponse(
-        201,
-        transaction,
-        "Initial Funds Transaction Completed Successfully"
+    transaction = (
+      await transactionModel.create(
+        [
+          {
+            fromAccount: fromUserAccount._id,
+            toAccount,
+            status: "PENDING",
+            amount,
+            idempotencyKey,
+          },
+        ],
+        { session }
       )
+    )[0];
+
+    await ledgerModel.create(
+      [
+        {
+          account: fromUserAccount._id,
+          amount: amount,
+          transaction: transaction._id,
+          type: "DEBIT",
+        },
+      ],
+      { session }
     );
+
+    await ledgerModel.create(
+      [
+        {
+          account: toUserAccount._id,
+          amount: amount,
+          transaction: transaction._id,
+          type: "CREDIT",
+        },
+      ],
+      { session }
+    );
+
+    await transactionModel.findByIdAndUpdate(
+      transaction._id,
+      { status: "COMPLETED" },
+      { session }
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return res
+      .status(201)
+      .json(
+        new ApiResponse(
+          201,
+          transaction,
+          "Initial Funds Transaction Completed Successfully"
+        )
+      );
+  } catch (err) {
+    console.error(err);
+    throw new ApiError(500, "Transaction Failed! Server Error.");
+  }
 });
 
 export { createTransaction, createInitialFundsTransaction };

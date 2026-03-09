@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 import { tokenBlacklistModel } from "../models/blacklist.model.js";
+import { accountModel } from "../models/account.model.js";
 
 const authMiddleware = asyncHandler(async (req, _, next) => {
   const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
@@ -21,8 +22,20 @@ const authMiddleware = asyncHandler(async (req, _, next) => {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
     const user = await userModel.findById(decoded._id);
+    const account = await accountModel.findOne({ user: decoded._id });
 
-    req.user = user;
+    if (!user) {
+      throw new ApiError(401, "User not found");
+    }
+
+    if (!account) {
+      throw new ApiError(404, "Account not found");
+    }
+
+    req.user = {
+      ...user.toObject(),
+      accountId: account._id,
+    };
 
     return next();
   } catch (err) {

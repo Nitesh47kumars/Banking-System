@@ -15,20 +15,28 @@ const createTransaction = asyncHandler(async (req, res) => {
    *  1. Validate Requiest
    */
 
-  const { fromAccount, toAccount, amount, idempotencyKey } = req.body;
+  const { toAccount, amount, idempotencyKey } = req.body;
 
-  if (!fromAccount || !toAccount || !amount || !idempotencyKey) {
+  const fromAccount = req.user.accountId;
+
+  if (!fromAccount) {
+    throw new ApiError(400, "User Acount not Found!");
+  }
+
+  if (!toAccount || !amount || !idempotencyKey) {
     throw new ApiError(
       400,
-      "fromAccount, toAccount, Amount and idempotencyKey all are Required!"
+      "toAccount, Amount and idempotencyKey all are Required!"
     );
   }
 
-  if (amount <= 0) {
-    throw new ApiError(400, "Amount must be greater than zero");
+  const amountNumber = Number(amount);
+
+  if (isNaN(amountNumber) || amountNumber <= 0) {
+    throw new ApiError(400, "Amount must be a valid positive number");
   }
 
-  if (fromAccount === toAccount) {
+  if (String(fromAccount) === String(toAccount)) {
     throw new ApiError(400, "Cannot transfer to same account");
   }
 

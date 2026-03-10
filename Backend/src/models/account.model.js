@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import {ledgerModel} from "../models/ledger.model.js";
+import {ledgerModel} from "./ledger.model.js";
 
 const accountSchema = new Schema(
   {

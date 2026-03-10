@@ -1,11 +1,15 @@
-import React from 'react'
+import React from "react";
+import Register from "./pages/Register";
+import {createBrowserRouter, RouterProvider} from "react-router-dom";
 
 const App = () => {
-  return (
-    <div>
-      <h1 className='text-blue-500 font-bold'>Hello World!</h1>
-    </div>
-  )
-}
+  const router = createBrowserRouter([
+    {
+      path: "/register",
+      element: <Register />,
+    },
+  ]);
+  return <RouterProvider router={router} />;
+};
 
-export default App
+export default App;

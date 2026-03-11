@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { registerUser } from "../api/authApi";
 
 export default function Register() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    fullName: "",
+    name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -15,14 +16,14 @@ export default function Register() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
+  const onHandleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const validate = () => {
     const newErrors = {};
 
-    if (!form.fullName) newErrors.fullName = "Full name required";
+    if (!form.name) newErrors.name = "Full name required";
     if (!form.email.includes("@")) newErrors.email = "Valid email required";
     if (form.password.length < 8) newErrors.password = "Minimum 8 characters";
     if (form.password !== form.confirmPassword)
@@ -31,7 +32,7 @@ export default function Register() {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const onHandleSubmit = async (e) => {
     e.preventDefault();
 
     const validationErrors = validate();
@@ -40,22 +41,22 @@ export default function Register() {
       return;
     }
 
-    setLoading(true);
-
-    setTimeout(() => {
+    try {
+      setLoading(true);
+      const res =  await registerUser(form);
+      console.log(res);
       setLoading(false);
-      navigate("/login");
-    }, 1500);
+      navigate("/login")
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f5f4f0] p-4">
-
       <div className="flex w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl">
-
         {/* LEFT PANEL */}
         <div className="hidden md:flex w-1/3 bg-black text-white p-10 flex-col justify-center">
-
           <div className="text-yellow-400 text-4xl mb-6">✦</div>
 
           <h2 className="text-2xl font-bold leading-snug mb-4">
@@ -79,31 +80,20 @@ export default function Register() {
 
         {/* RIGHT PANEL */}
         <div className="flex-1 bg-white p-10">
+          <h1 className="text-4xl font-extrabold mb-8">Create account</h1>
 
-          <h1 className="text-3xl font-bold mb-2">
-            Create account
-          </h1>
-
-          <p className="text-gray-500 text-sm mb-6">
-            Already have one?{" "}
-            <Link to="/login" className="underline font-semibold">
-              Sign in
-            </Link>
-          </p>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-
+          <form onSubmit={onHandleSubmit} className="space-y-4">
             {/* Full Name */}
             <div>
               <input
-                name="fullName"
+                name="name"
                 placeholder="Full Name"
-                value={form.fullName}
-                onChange={handleChange}
+                value={form.name}
+                onChange={onHandleChange}
                 className="w-full border p-3 rounded-lg bg-gray-50 focus:ring-2 focus:ring-black outline-none"
               />
-              {errors.fullName && (
-                <p className="text-red-500 text-sm">{errors.fullName}</p>
+              {errors.name && (
+                <p className="text-red-500 text-sm">{errors.name}</p>
               )}
             </div>
 
@@ -113,7 +103,7 @@ export default function Register() {
                 name="email"
                 placeholder="Email"
                 value={form.email}
-                onChange={handleChange}
+                onChange={onHandleChange}
                 className="w-full border p-3 rounded-lg bg-gray-50 focus:ring-2 focus:ring-black outline-none"
               />
               {errors.email && (
@@ -128,7 +118,7 @@ export default function Register() {
                 name="password"
                 placeholder="Password (min 8 characters)"
                 value={form.password}
-                onChange={handleChange}
+                onChange={onHandleChange}
                 className="w-full border p-3 rounded-lg bg-gray-50 focus:ring-2 focus:ring-black outline-none"
               />
 
@@ -152,14 +142,12 @@ export default function Register() {
                 name="confirmPassword"
                 placeholder="Confirm Password"
                 value={form.confirmPassword}
-                onChange={handleChange}
+                onChange={onHandleChange}
                 className="w-full border p-3 rounded-lg bg-gray-50 focus:ring-2 focus:ring-black outline-none"
               />
 
               {errors.confirmPassword && (
-                <p className="text-red-500 text-sm">
-                  {errors.confirmPassword}
-                </p>
+                <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
               )}
             </div>
 
@@ -170,13 +158,18 @@ export default function Register() {
             >
               {loading ? "Creating..." : "Create Account →"}
             </button>
-
           </form>
+
+          <p className="text-sm text-center mt-6 text-gray-500">
+            Already have an account?{" "}
+            <Link to="/register" className="text-black font-semibold underline">
+              Login
+            </Link>
+          </p>
 
           <p className="text-xs text-gray-400 text-center mt-6">
             By registering you agree to our Terms & Privacy Policy
           </p>
-
         </div>
       </div>
     </div>

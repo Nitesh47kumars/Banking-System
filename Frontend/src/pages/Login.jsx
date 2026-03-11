@@ -1,6 +1,9 @@
 import React, { useState } from "react";
-
+import {Link, useNavigate} from "react-router-dom"
 const Login = () => {
+
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -32,12 +35,12 @@ const Login = () => {
     }
 
     setLoading(true);
+    navigate("/dashboard")
   };
 
   return (
-    <section className="flex items-center justify-center min-h-screen bg-gradient-to-br from-sky-200 via-gray-200 to-purple-300 p-4">
-      <div className="flex w-full max-w-5xl h-[600px] rounded-2xl overflow-hidden shadow-2xl bg-white">
-        
+    <section className="flex items-center justify-center min-h-screen bg-linear-to-br from-sky-200 via-gray-200 to-purple-300 p-4">
+      <div className="flex w-full max-w-5xl h-150 rounded-2xl overflow-hidden shadow-2xl bg-white">
         {/* LEFT PANEL */}
         <div className="hidden md:flex w-2/5 bg-black text-white p-10 flex-col justify-center">
           <h1 className="text-3xl font-bold mb-4">Welcome Back</h1>
@@ -67,7 +70,6 @@ const Login = () => {
             </p>
 
             <form onSubmit={onHandleSubmit} className="space-y-4">
-              
               {/* Email */}
               <div>
                 <label className="text-sm text-gray-600">Email</label>
@@ -125,11 +127,13 @@ const Login = () => {
             {/* Register link */}
             <p className="text-sm text-center mt-6 text-gray-500">
               Don't have an account?{" "}
-              <a href="/register" className="text-black font-semibold underline">
+              <Link
+                to="/register"
+                className="text-black font-semibold underline"
+              >
                 Register
-              </a>
+              </Link>
             </p>
-
           </div>
         </div>
       </div>

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import {Link, useNavigate} from "react-router-dom"
-const Login = () => {
+import { Link, useNavigate } from "react-router-dom";
+import { RiBankLine } from "react-icons/ri";
 
+const Login = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -30,22 +31,32 @@ const Login = () => {
   const onHandleSubmit = (e) => {
     e.preventDefault();
     const validateError = validate();
+
     if (Object.keys(validateError).length) {
       return setError(validateError);
     }
 
     setLoading(true);
-    navigate("/dashboard")
+    navigate("/dashboard");
   };
 
   return (
-    <section className="flex items-center justify-center min-h-screen bg-linear-to-br from-sky-200 via-gray-200 to-purple-300 p-4">
-      <div className="flex w-full max-w-5xl h-150 rounded-2xl overflow-hidden shadow-2xl bg-white">
+    <section className="flex items-center justify-center min-h-screen bg-[#0a0a0b] p-4">
+      <div className="flex w-full max-w-5xl rounded-2xl overflow-hidden border border-white/10 bg-white/5">
+
         {/* LEFT PANEL */}
-        <div className="hidden md:flex w-2/5 bg-black text-white p-10 flex-col justify-center">
+        <div className="hidden md:flex w-2/5 bg-[#0f0f11] text-white p-10 flex-col justify-center border-r border-white/10">
+
+          <div className="flex items-center gap-2 mb-6">
+            <div className="w-8 h-8 bg-amber-400 rounded-lg grid place-items-center">
+              <RiBankLine size={16} className="text-black" />
+            </div>
+            <span className="font-bold text-lg">BankX</span>
+          </div>
+
           <h1 className="text-3xl font-bold mb-4">Welcome Back</h1>
 
-          <p className="text-gray-400 mb-8">
+          <p className="text-white/50 mb-8">
             Login to access your banking dashboard and manage your account
             securely.
           </p>
@@ -54,7 +65,7 @@ const Login = () => {
             {[...Array(6)].map((_, i) => (
               <div
                 key={i}
-                className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"
+                className="w-2 h-2 bg-amber-400 rounded-full animate-pulse"
               />
             ))}
           </div>
@@ -62,17 +73,20 @@ const Login = () => {
 
         {/* RIGHT PANEL */}
         <div className="flex-1 flex items-center justify-center p-10">
-          <div className="w-full max-w-md">
-            <h2 className="text-3xl font-bold mb-2">Sign In</h2>
 
-            <p className="text-gray-500 mb-6">
+          <div className="w-full max-w-md">
+
+            <h2 className="text-3xl font-bold mb-2 text-white">Sign In</h2>
+
+            <p className="text-white/50 mb-6">
               Enter your credentials to continue
             </p>
 
             <form onSubmit={onHandleSubmit} className="space-y-4">
+
               {/* Email */}
               <div>
-                <label className="text-sm text-gray-600">Email</label>
+                <label className="text-sm text-white/60">Email</label>
 
                 <input
                   name="email"
@@ -80,17 +94,17 @@ const Login = () => {
                   onChange={handleChange}
                   type="email"
                   placeholder="example@email.com"
-                  className="w-full border rounded-lg p-3 mt-1 bg-gray-50 focus:ring-2 focus:ring-black outline-none"
+                  className="w-full border border-white/10 rounded-lg p-3 mt-1 bg-white/5 text-white placeholder-white/40 focus:border-amber-400 outline-none"
                 />
 
                 {error.email && (
-                  <p className="text-red-500 text-sm">{error.email}</p>
+                  <p className="text-red-400 text-sm">{error.email}</p>
                 )}
               </div>
 
               {/* Password */}
               <div>
-                <label className="text-sm text-gray-600">Password</label>
+                <label className="text-sm text-white/60">Password</label>
 
                 <input
                   name="password"
@@ -98,42 +112,31 @@ const Login = () => {
                   onChange={handleChange}
                   type="password"
                   placeholder="••••••••"
-                  className="w-full border rounded-lg p-3 mt-1 bg-gray-50 focus:ring-2 focus:ring-black outline-none"
+                  className="w-full border border-white/10 rounded-lg p-3 mt-1 bg-white/5 text-white placeholder-white/40 focus:border-amber-400 outline-none"
                 />
 
                 {(error.password || error.passwordlength) && (
-                  <p className="text-red-500 text-sm">
+                  <p className="text-red-400 text-sm">
                     {error.password || error.passwordlength}
                   </p>
                 )}
               </div>
 
-              {/* Forgot password */}
-              <div className="flex items-center justify-end text-xs">
-                <a href="#" className="text-blue-600 hover:underline">
-                  Forgot password?
-                </a>
-              </div>
-
-              {/* Button */}
               <button
                 type="submit"
-                className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:opacity-90"
+                className="w-full bg-amber-400 text-black py-3 rounded-lg font-semibold hover:bg-amber-300"
               >
-                {loading ? "Logging in..." : "Login →"}
+                {loading ? "Logging in..." : "Login"}
               </button>
             </form>
 
-            {/* Register link */}
-            <p className="text-sm text-center mt-6 text-gray-500">
+            <p className="text-sm text-center mt-6 text-white/50">
               Don't have an account?{" "}
-              <Link
-                to="/register"
-                className="text-black font-semibold underline"
-              >
+              <Link to="/register" className="text-amber-400 font-semibold">
                 Register
               </Link>
             </p>
+
           </div>
         </div>
       </div>

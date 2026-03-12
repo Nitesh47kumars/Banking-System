@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../api/authApi";
+import { RiBankLine } from "react-icons/ri";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -43,133 +44,132 @@ export default function Register() {
 
     try {
       setLoading(true);
-      const res =  await registerUser(form);
-      console.log(res);
-      setLoading(false);
-      navigate("/login")
+      await registerUser(form);
+      navigate("/login");
     } catch (err) {
       console.error(err);
     }
+
+    setLoading(false);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f5f4f0] p-4">
-      <div className="flex w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl">
+    <div className="min-h-screen flex items-center justify-center bg-[#0a0a0b] p-4">
+      <div className="flex w-full max-w-5xl rounded-2xl overflow-hidden border border-white/10 bg-white/5">
+
         {/* LEFT PANEL */}
-        <div className="hidden md:flex w-1/3 bg-black text-white p-10 flex-col justify-center">
-          <div className="text-yellow-400 text-4xl mb-6">✦</div>
+        <div className="hidden md:flex w-2/5 bg-[#0f0f11] text-white p-10 flex-col justify-center border-r border-white/10">
+
+          <div className="flex items-center gap-2 mb-6">
+            <div className="w-8 h-8 bg-amber-400 rounded-lg grid place-items-center">
+              <RiBankLine className="text-black" size={16} />
+            </div>
+            <span className="font-bold text-lg">BankX</span>
+          </div>
 
           <h2 className="text-2xl font-bold leading-snug mb-4">
-            Start your journey with us today.
+            Start your banking journey today.
           </h2>
 
-          <p className="text-gray-400 text-sm">
-            Join thousands of users building something great.
+          <p className="text-white/50 text-sm">
+            Join thousands of users managing their finances securely.
           </p>
 
-          {/* animated dots */}
-          <div className="flex gap-2 mt-8 flex-wrap">
+          <div className="flex gap-2 mt-8">
             {[...Array(6)].map((_, i) => (
               <div
                 key={i}
-                className={`w-2 h-2 bg-yellow-400 rounded-full animate-pulse`}
+                className="w-2 h-2 bg-amber-400 rounded-full animate-pulse"
               />
             ))}
           </div>
         </div>
 
         {/* RIGHT PANEL */}
-        <div className="flex-1 bg-white p-10">
-          <h1 className="text-4xl font-extrabold mb-8">Create account</h1>
+        <div className="flex-1 p-10">
+
+          <h1 className="text-3xl font-bold text-white mb-8">
+            Create account
+          </h1>
 
           <form onSubmit={onHandleSubmit} className="space-y-4">
-            {/* Full Name */}
-            <div>
-              <input
-                name="name"
-                placeholder="Full Name"
-                value={form.name}
-                onChange={onHandleChange}
-                className="w-full border p-3 rounded-lg bg-gray-50 focus:ring-2 focus:ring-black outline-none"
-              />
-              {errors.name && (
-                <p className="text-red-500 text-sm">{errors.name}</p>
-              )}
-            </div>
 
-            {/* Email */}
-            <div>
-              <input
-                name="email"
-                placeholder="Email"
-                value={form.email}
-                onChange={onHandleChange}
-                className="w-full border p-3 rounded-lg bg-gray-50 focus:ring-2 focus:ring-black outline-none"
-              />
-              {errors.email && (
-                <p className="text-red-500 text-sm">{errors.email}</p>
-              )}
-            </div>
+            <input
+              name="name"
+              placeholder="Full Name"
+              value={form.name}
+              onChange={onHandleChange}
+              className="w-full border border-white/10 p-3 rounded-lg bg-white/5 text-white placeholder-white/40 focus:border-amber-400 outline-none"
+            />
+            {errors.name && (
+              <p className="text-red-400 text-sm">{errors.name}</p>
+            )}
 
-            {/* Password */}
+            <input
+              name="email"
+              placeholder="Email"
+              value={form.email}
+              onChange={onHandleChange}
+              className="w-full border border-white/10 p-3 rounded-lg bg-white/5 text-white placeholder-white/40 focus:border-amber-400 outline-none"
+            />
+            {errors.email && (
+              <p className="text-red-400 text-sm">{errors.email}</p>
+            )}
+
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
-                placeholder="Password (min 8 characters)"
+                placeholder="Password"
                 value={form.password}
                 onChange={onHandleChange}
-                className="w-full border p-3 rounded-lg bg-gray-50 focus:ring-2 focus:ring-black outline-none"
+                className="w-full border border-white/10 p-3 rounded-lg bg-white/5 text-white placeholder-white/40 focus:border-amber-400 outline-none"
               />
 
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-3 text-sm text-gray-500"
+                className="absolute right-3 top-3 text-sm text-white/40"
               >
                 {showPassword ? "Hide" : "Show"}
               </button>
 
               {errors.password && (
-                <p className="text-red-500 text-sm">{errors.password}</p>
+                <p className="text-red-400 text-sm">{errors.password}</p>
               )}
             </div>
 
-            {/* Confirm Password */}
-            <div>
-              <input
-                type="password"
-                name="confirmPassword"
-                placeholder="Confirm Password"
-                value={form.confirmPassword}
-                onChange={onHandleChange}
-                className="w-full border p-3 rounded-lg bg-gray-50 focus:ring-2 focus:ring-black outline-none"
-              />
+            <input
+              type={showPassword ? "text" : "password"}
+              name="confirmPassword"
+              placeholder="Confirm Password"
+              value={form.confirmPassword}
+              onChange={onHandleChange}
+              className="w-full border border-white/10 p-3 rounded-lg bg-white/5 text-white placeholder-white/40 focus:border-amber-400 outline-none"
+            />
 
-              {errors.confirmPassword && (
-                <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
-              )}
-            </div>
+            {errors.confirmPassword && (
+              <p className="text-red-400 text-sm">
+                {errors.confirmPassword}
+              </p>
+            )}
 
-            {/* Submit */}
             <button
-              className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:opacity-90"
+              className="w-full bg-amber-400 text-black py-3 rounded-lg font-semibold hover:bg-amber-300"
               disabled={loading}
             >
-              {loading ? "Creating..." : "Create Account →"}
+              {loading ? "Creating..." : "Create Account"}
             </button>
+
           </form>
 
-          <p className="text-sm text-center mt-6 text-gray-500">
+          <p className="text-sm text-center mt-6 text-white/50">
             Already have an account?{" "}
-            <Link to="/register" className="text-black font-semibold underline">
+            <Link to="/login" className="text-amber-400 font-semibold">
               Login
             </Link>
           </p>
 
-          <p className="text-xs text-gray-400 text-center mt-6">
-            By registering you agree to our Terms & Privacy Policy
-          </p>
         </div>
       </div>
     </div>

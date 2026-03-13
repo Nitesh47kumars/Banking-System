@@ -5,15 +5,6 @@ import { getUser } from "../redux/authSlice";
 const Dashboard = () => {
   const {user, loading} = useSelector((state) => state.auth);
 
-  const dispatch = useDispatch();
-  useEffect(() => {
-    const fetchUser = async () => {
-      const response = await dispatch(getUser());
-      console.log(response);
-    };
-    fetchUser();
-  }, [dispatch]);
-
   if (!user) {
     return (
       <div className="flex items-center justify-center h-screen">

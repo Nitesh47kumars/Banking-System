@@ -3,7 +3,7 @@ import { registerUser, loginUser, getUserData } from "../api/axios";
 
 const initialState = {
   user: null,
-  loading: false,
+  loading: true,
   error: null,
 };
 

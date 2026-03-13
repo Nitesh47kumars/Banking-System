@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { registerUser, loginUser } from "../api/axios";
+import { registerUser, loginUser, getUserData } from "../api/axios";
 
 const initialState = {
   user: null,
   loading: false,
-  error: null
+  error: null,
 };
 
 export const register = createAsyncThunk(
@@ -13,8 +13,8 @@ export const register = createAsyncThunk(
     try {
       const response = await registerUser(formData);
       return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
     }
   }
 );
@@ -25,8 +25,20 @@ export const login = createAsyncThunk(
     try {
       const response = await loginUser(formData);
       return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
+export const getUser = createAsyncThunk(
+  "auth/getuserdata",
+  async (_,thunkAPI) => {
+    try {
+      const response = await getUserData()
+      return response.data
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
     }
   }
 );
@@ -37,7 +49,7 @@ const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.user = null;
-    }
+    },
   },
 
   extraReducers: (builder) => {
@@ -67,8 +79,21 @@ const authSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      });
-  }
+      })
+
+      //getUserData
+      .addCase(getUser.pending, (state)=>{
+        state.loading = true;
+      })
+      .addCase(getUser.fulfilled, (state, action)=>{
+        state.loading = false;
+        state.user = action.payload
+      })
+      .addCase(getUser.rejected, (state, action)=>{
+        state.loading = false;
+        state.error = action.payload
+      })
+  },
 });
 
 export const { logout } = authSlice.actions;

@@ -3,6 +3,7 @@ import {
   userLoginController,
   userRegisterationController,
   userLogoutController,
+  getUserData,
 } from "../controllers/auth.controller.js";
 
 const router = Router();
@@ -15,5 +16,8 @@ router.post("/login", userLoginController);
 
 // POST /api/auth/logout
 router.post("/logout", userLogoutController);
+
+//GET /api/auth/logout
+router.get("/getuserdata", getUserData);
 
 export default router;

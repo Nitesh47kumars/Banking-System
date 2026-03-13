@@ -94,8 +94,19 @@ const userLogoutController = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, "User Logout Successfully."));
 });
 
+const getUserData = asyncHandler(async (req, res) => {
+  const user = req.user;
+
+  if(!user){
+    throw new ApiError(400, "User Not Found!");
+  }
+
+  res.status(200).json(new ApiResponse(200, user, "User Fetch Successfully!"));
+});
+
 export {
   userRegisterationController,
   userLoginController,
   userLogoutController,
+  getUserData
 };

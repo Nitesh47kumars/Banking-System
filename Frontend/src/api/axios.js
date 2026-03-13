@@ -11,3 +11,7 @@ export const registerUser = (form) =>{
 export const loginUser = (form) =>{
   return api.post("api/auth/login", form);
 }
+
+export const getUserData = () =>{
+  return api.get("api/auth/getuserdata")
+}

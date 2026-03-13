@@ -1,10 +1,18 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getUser } from "../redux/authSlice";
 
 const Dashboard = () => {
+  const user = useSelector((state) => state);
 
-  const user = useSelector((state)=>state);
-  console.log(user)
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const fetchUser = async () => {
+      const response = await dispatch(getUser());
+      console.log(response);
+    };
+    fetchUser();
+  }, [dispatch]);
 
   if (!user) {
     return (
@@ -16,7 +24,6 @@ const Dashboard = () => {
 
   return (
     <section className="min-h-screen bg-gray-100 p-6">
-
       {/* Header */}
       <div className="max-w-6xl mx-auto flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Bank Dashboard</h1>
@@ -27,17 +34,12 @@ const Dashboard = () => {
 
       {/* Welcome Card */}
       <div className="max-w-6xl mx-auto bg-white p-6 rounded-xl shadow mb-6">
-        <h2 className="text-xl font-semibold">
-          Welcome, {user.name}
-        </h2>
-        <p className="text-gray-500">
-          Manage your account and transactions
-        </p>
+        <h2 className="text-xl font-semibold">Welcome, {user.name}</h2>
+        <p className="text-gray-500">Manage your account and transactions</p>
       </div>
 
       {/* Account Info */}
       <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-6">
-
         <div className="bg-white p-6 rounded-xl shadow">
           <h3 className="text-gray-500 text-sm">Account Holder</h3>
           <p className="text-lg font-semibold">{user.name}</p>
@@ -52,7 +54,6 @@ const Dashboard = () => {
           <h3 className="text-gray-500 text-sm">Account ID</h3>
           <p className="text-sm font-mono">{user._id}</p>
         </div>
-
       </div>
 
       {/* Account Created */}
@@ -62,7 +63,6 @@ const Dashboard = () => {
           {new Date(user.createdAt).toLocaleDateString()}
         </p>
       </div>
-
     </section>
   );
 };

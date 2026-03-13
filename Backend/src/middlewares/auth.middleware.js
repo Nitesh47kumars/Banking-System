@@ -28,14 +28,16 @@ const authMiddleware = asyncHandler(async (req, _, next) => {
       throw new ApiError(401, "User not found");
     }
 
-    if (!account) {
-      throw new ApiError(404, "Account not found");
-    }
+    // if (!account) {
+    //   throw new ApiError(404, "Account not found");
+    // }
 
-    req.user = {
-      ...user.toObject(),
-      accountId: account._id,
-    };
+    // req.user = {
+    //   ...user.toObject(),
+    //   accountId: account._id,
+    // };
+    
+    req.user = user;
 
     return next();
   } catch (err) {

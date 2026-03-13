@@ -12,7 +12,7 @@ export const register = createAsyncThunk(
   async (formData, thunkAPI) => {
     try {
       const response = await registerUser(formData);
-      return response.data;
+      return response.data.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.message);
     }
@@ -24,7 +24,7 @@ export const login = createAsyncThunk(
   async (formData, thunkAPI) => {
     try {
       const response = await loginUser(formData);
-      return response.data;
+      return response.data.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.message);
     }
@@ -36,7 +36,7 @@ export const getUser = createAsyncThunk(
   async (_,thunkAPI) => {
     try {
       const response = await getUserData()
-      return response.data
+      return response.data.data
     } catch (err) {
       return thunkAPI.rejectWithValue(err.message);
     }

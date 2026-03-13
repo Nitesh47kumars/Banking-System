@@ -12,6 +12,7 @@ import { tokenBlacklistModel } from "../models/blacklist.model.js";
 const options = {
   httpOnly: true,
   secure: true,
+  sameSite: "None"
 };
 
 const userRegisterationController = asyncHandler(async (req, res) => {

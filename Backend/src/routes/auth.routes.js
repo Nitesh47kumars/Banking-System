@@ -6,6 +6,8 @@ import {
   getUserData,
 } from "../controllers/auth.controller.js";
 
+import { authMiddleware } from "../middlewares/auth.middleware.js";
+
 const router = Router();
 
 // POST /api/auth/register
@@ -17,7 +19,7 @@ router.post("/login", userLoginController);
 // POST /api/auth/logout
 router.post("/logout", userLogoutController);
 
-//GET /api/auth/logout
-router.get("/getuserdata", getUserData);
+//GET /api/auth/getuserdata
+router.get("/getuserdata", authMiddleware, getUserData);
 
 export default router;

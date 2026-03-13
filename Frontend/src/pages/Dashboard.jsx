@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "../redux/authSlice";
 
 const Dashboard = () => {
-  const user = useSelector((state) => state);
+  const {user, loading} = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
   useEffect(() => {

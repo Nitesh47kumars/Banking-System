@@ -12,7 +12,7 @@ const Home = () => {
     <div className="min-h-screen bg-[#0a0a0b] text-white">
 
       {/* Navbar */}
-      <navbar className="flex items-center justify-between px-8 py-5 border-b border-white/10">
+      <section className="flex items-center justify-between px-8 py-5 border-b border-white/10">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-amber-400 rounded-lg grid place-items-center">
             <RiBankLine className="text-black" size={16} />
@@ -32,7 +32,7 @@ const Home = () => {
             Get Started <RiArrowRightLine />
           </Link>
         </nav>
-      </navbar>
+      </section>
 
       {/* Hero */}
       <section className="text-center px-6 py-28 max-w-3xl mx-auto">

@@ -1,6 +1,10 @@
 import React from "react";
+import { useSelector } from "react-redux";
 
-const Dashboard = ({ user }) => {
+const Dashboard = () => {
+
+  const user = useSelector((state)=>state);
+  console.log(user)
 
   if (!user) {
     return (

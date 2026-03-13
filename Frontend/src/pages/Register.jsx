@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { registerUser } from "../api/authApi";
 import { RiBankLine } from "react-icons/ri";
+import { useSelector, useDispatch } from "react-redux";
+import { register } from "../redux/authSlice";
 
 export default function Register() {
+  const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.auth);
+
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -15,7 +19,6 @@ export default function Register() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
 
   const onHandleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -42,24 +45,20 @@ export default function Register() {
       return;
     }
 
-    try {
-      setLoading(true);
-      await registerUser(form);
-      navigate("/login");
-    } catch (err) {
-      console.error(err);
-    }
+    const result = await dispatch(register(form));
 
-    setLoading(false);
+    console.log(result);
+
+    if (result.meta.requestStatus === "fulfilled") {
+      navigate("/login");
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0a0a0b] p-4">
       <div className="flex w-full max-w-5xl rounded-2xl overflow-hidden border border-white/10 bg-white/5">
-
         {/* LEFT PANEL */}
         <div className="hidden md:flex w-2/5 bg-[#0f0f11] text-white p-10 flex-col justify-center border-r border-white/10">
-
           <div className="flex items-center gap-2 mb-6">
             <div className="w-8 h-8 bg-amber-400 rounded-lg grid place-items-center">
               <RiBankLine className="text-black" size={16} />
@@ -87,13 +86,9 @@ export default function Register() {
 
         {/* RIGHT PANEL */}
         <div className="flex-1 p-10">
-
-          <h1 className="text-3xl font-bold text-white mb-8">
-            Create account
-          </h1>
+          <h1 className="text-3xl font-bold text-white mb-8">Create account</h1>
 
           <form onSubmit={onHandleSubmit} className="space-y-4">
-
             <input
               name="name"
               placeholder="Full Name"
@@ -149,9 +144,7 @@ export default function Register() {
             />
 
             {errors.confirmPassword && (
-              <p className="text-red-400 text-sm">
-                {errors.confirmPassword}
-              </p>
+              <p className="text-red-400 text-sm">{errors.confirmPassword}</p>
             )}
 
             <button
@@ -160,7 +153,6 @@ export default function Register() {
             >
               {loading ? "Creating..." : "Create Account"}
             </button>
-
           </form>
 
           <p className="text-sm text-center mt-6 text-white/50">
@@ -169,7 +161,6 @@ export default function Register() {
               Login
             </Link>
           </p>
-
         </div>
       </div>
     </div>

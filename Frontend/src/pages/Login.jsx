@@ -2,8 +2,13 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { RiBankLine } from "react-icons/ri";
 
+import { useSelector, useDispatch } from "react-redux";
+import {login} from "../redux/authSlice"
+
 const Login = () => {
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
 
   const [form, setForm] = useState({
     email: "",
@@ -28,7 +33,7 @@ const Login = () => {
     return newError;
   };
 
-  const onHandleSubmit = (e) => {
+  const onHandleSubmit = async (e) => {
     e.preventDefault();
     const validateError = validate();
 
@@ -36,17 +41,19 @@ const Login = () => {
       return setError(validateError);
     }
 
-    setLoading(true);
-    navigate("/dashboard");
+    const result = await dispatch(login(form));
+    console.log(result)
+
+    if (result.meta.requestStatus === "fulfilled") {
+      navigate("/dashboard");
+    }
   };
 
   return (
     <section className="flex items-center justify-center min-h-screen bg-[#0a0a0b] p-4">
       <div className="flex w-full max-w-5xl rounded-2xl overflow-hidden border border-white/10 bg-white/5">
-
         {/* LEFT PANEL */}
         <div className="hidden md:flex w-2/5 bg-[#0f0f11] text-white p-10 flex-col justify-center border-r border-white/10">
-
           <div className="flex items-center gap-2 mb-6">
             <div className="w-8 h-8 bg-amber-400 rounded-lg grid place-items-center">
               <RiBankLine size={16} className="text-black" />
@@ -73,9 +80,7 @@ const Login = () => {
 
         {/* RIGHT PANEL */}
         <div className="flex-1 flex items-center justify-center p-10">
-
           <div className="w-full max-w-md">
-
             <h2 className="text-3xl font-bold mb-2 text-white">Sign In</h2>
 
             <p className="text-white/50 mb-6">
@@ -83,7 +88,6 @@ const Login = () => {
             </p>
 
             <form onSubmit={onHandleSubmit} className="space-y-4">
-
               {/* Email */}
               <div>
                 <label className="text-sm text-white/60">Email</label>
@@ -136,7 +140,6 @@ const Login = () => {
                 Register
               </Link>
             </p>
-
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
 import { getUser } from "../redux/authSlice";
+import Loading from "../utils/Loading"
 
 const ProtectedRoute = () => {
   
@@ -14,7 +15,7 @@ const ProtectedRoute = () => {
     }
   }, [dispatch]);
 
-  if (loading) return <h1>Loading.....</h1>;
+  if (loading) return <Loading/>;
   if (!user) {
     return <Navigate to="/login" replace />;
   }

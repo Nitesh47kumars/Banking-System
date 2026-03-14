@@ -24,11 +24,11 @@ const App = () => {
           element: <AuthRoute />,
           children: [
             {
-              path: "register",
+              path: "/register",
               element: <Register />,
             },
             {
-              path: "login",
+              path: "/login",
               element: <Login />,
             },
           ],
@@ -38,7 +38,7 @@ const App = () => {
           element: <ProtectedRoute />,
           children: [
             {
-              path: "dashboard",
+              path: "/dashboard",
               element: <Dashboard />,
             },
           ],

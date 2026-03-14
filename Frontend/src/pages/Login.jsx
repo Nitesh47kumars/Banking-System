@@ -16,7 +16,7 @@ const Login = () => {
   });
 
   const [error, setError] = useState({});
-  const [loading, setLoading] = useState(false);
+  const {loading} = useSelector((state)=> state.auth);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });

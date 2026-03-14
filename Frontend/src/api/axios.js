@@ -16,3 +16,7 @@ export const loginUser = (form) =>{
 export const getUserData = () =>{
   return api.get("/api/auth/getuserdata")
 }
+
+export const logoutUser = () =>{
+  return api.post("/api/auth/logout")
+}

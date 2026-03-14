@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   RiBankLine,
   RiShieldCheckLine,
@@ -7,35 +7,50 @@ import {
   RiArrowRightLine,
 } from "react-icons/ri";
 
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
+
 const Home = () => {
+  const { user, loading } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate("/login");
+    }
+  }, [user, loading, navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen grid place-items-center text-white/50">
+        Loading...
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#0a0a0b] text-white">
 
       {/* Hero */}
       <section className="text-center px-6 py-28 max-w-3xl mx-auto">
+
         <h1 className="text-5xl font-bold leading-tight mb-6">
-          Banking that works{" "}
-          <span className="text-amber-400 italic">for you</span>
+          Welcome back{" "}
+          <span className="text-amber-400 italic">
+            {user?.name?.split(" ")[0]}
+          </span>
         </h1>
 
         <p className="text-white/50 mb-8">
-          Manage your finances, track transactions, and send money instantly
-          with our secure banking platform.
+          Manage your finances, track transactions, and send money instantly.
         </p>
 
         <div className="flex justify-center gap-4">
           <Link
-            to="/register"
+            to="/dashboard"
             className="bg-amber-400 text-black px-6 py-3 rounded-xl font-semibold flex items-center gap-2"
           >
-            Open Account <RiArrowRightLine />
-          </Link>
-
-          <Link
-            to="/login"
-            className="border border-white/20 px-6 py-3 rounded-xl text-white/70 hover:text-white"
-          >
-            Login
+            Go to Dashboard <RiArrowRightLine />
           </Link>
         </div>
       </section>

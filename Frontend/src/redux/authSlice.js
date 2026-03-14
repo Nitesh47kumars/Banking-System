@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { registerUser, loginUser, getUserData } from "../api/axios";
+import { registerUser, loginUser, getUserData, logoutUser } from "../api/axios";
 
 const initialState = {
   user: null,
@@ -42,15 +42,21 @@ export const getUser = createAsyncThunk(
     }
   }
 );
+export const logout = createAsyncThunk(
+  "auth/logout",
+  async (_,thunkAPI) => {
+    try {
+      const response = await logoutUser()
+      return response.data.data
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {
-    logout: (state) => {
-      state.user = null;
-    },
-  },
 
   extraReducers: (builder) => {
     builder
@@ -93,9 +99,21 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload
       })
+
+      // LOGOUT
+      .addCase(logout.pending, (state)=>{
+        state.loading = true;
+      })
+      .addCase(logout.fulfilled, (state, action)=>{
+        state.loading = false;
+        state.user = null
+      })
+      .addCase(logout.rejected, (state, action)=>{
+        state.loading = false;
+        state.error = action.payload
+      })
   },
 });
 
-export const { logout } = authSlice.actions;
 
 export default authSlice.reducer;

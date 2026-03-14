@@ -20,3 +20,15 @@ export const getUserData = () =>{
 export const logoutUser = () =>{
   return api.post("/api/auth/logout")
 }
+
+export const createUserAccount = ()=>{
+  return api.post("/api/account")
+}
+
+export const getUserAccount = () => {
+  return api.get("/api/account");
+}
+
+export const getUserBalance = (accountId)=>{
+  return api.get(`/api/account/${accountId}`)
+}

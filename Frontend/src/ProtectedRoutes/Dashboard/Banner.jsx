@@ -1,6 +1,9 @@
 import React from "react";
-import {RiExchangeLine} from "react-icons/ri"
-const Banner = ({user}) => {
+import { RiExchangeLine } from "react-icons/ri";
+import { useSelector } from "react-redux";
+
+const Banner = () => {
+  const { user } = useSelector((state) => state.auth);
   return (
     <div className="bg-linear-to-r from-amber-400/10 via-amber-400/5 to-transparent border border-amber-400/15 rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>

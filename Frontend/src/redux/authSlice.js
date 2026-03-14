@@ -1,8 +1,18 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { registerUser, loginUser, getUserData, logoutUser } from "../api/axios";
+import {
+  registerUser,
+  loginUser,
+  getUserData,
+  logoutUser,
+  getUserBalance,
+  createUserAccount,
+  getUserAccount
+} from "../api/axios";
 
 const initialState = {
   user: null,
+  account: null,
+  balance: null,
   loading: true,
   error: null,
 };
@@ -33,22 +43,48 @@ export const login = createAsyncThunk(
 
 export const getUser = createAsyncThunk(
   "auth/getuserdata",
-  async (_,thunkAPI) => {
+  async (_, thunkAPI) => {
     try {
-      const response = await getUserData()
-      return response.data.data
+      const response = await getUserData();
+      return response.data.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.message);
     }
   }
 );
-export const logout = createAsyncThunk(
-  "auth/logout",
-  async (_,thunkAPI) => {
+
+export const logout = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
+  try {
+    const response = await logoutUser();
+    return response.data.data;
+  } catch (err) {
+    return thunkAPI.rejectWithValue(err.message);
+  }
+});
+
+export const getBalance = createAsyncThunk(
+  "auth/getbalance",
+  async (accountId, thunkAPI) => {
     try {
-      const response = await logoutUser()
-      return response.data.data
+      const response = await getUserBalance(accountId);
+      return response.data.data;
     } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
+export const createAccount = createAsyncThunk(
+  "auth/createaccount",
+  async (_, thunkAPI) => {
+    try {
+      const response = await createUserAccount();
+      return response.data.data;
+    } catch (err) {
+      if (err.response?.status === 409) {
+        const existing = await getUserAccount();
+        return existing.data.data[0];
+      }
       return thunkAPI.rejectWithValue(err.message);
     }
   }
@@ -88,32 +124,57 @@ const authSlice = createSlice({
       })
 
       //getUserData
-      .addCase(getUser.pending, (state)=>{
+      .addCase(getUser.pending, (state) => {
         state.loading = true;
       })
-      .addCase(getUser.fulfilled, (state, action)=>{
+      .addCase(getUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload
+        state.user = action.payload;
       })
-      .addCase(getUser.rejected, (state, action)=>{
+      .addCase(getUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload
+        state.error = action.payload;
       })
 
       // LOGOUT
-      .addCase(logout.pending, (state)=>{
+      .addCase(logout.pending, (state) => {
         state.loading = true;
       })
-      .addCase(logout.fulfilled, (state, action)=>{
+      .addCase(logout.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = null
+        state.user = null;
       })
-      .addCase(logout.rejected, (state, action)=>{
+      .addCase(logout.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload
+        state.error = action.payload;
+      })
+
+      // CREATE ACCOUNT
+      .addCase(createAccount.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(createAccount.fulfilled, (state, action) => {
+        state.loading = false;
+        state.account = action.payload || null;
+      })
+      .addCase(createAccount.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // GETBALANCE
+      .addCase(getBalance.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getBalance.fulfilled, (state, action) => {
+        state.loading = false;
+        state.balance = action.payload;
+      })
+      .addCase(getBalance.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       })
   },
 });
-
 
 export default authSlice.reducer;

@@ -9,6 +9,7 @@ import Dashboard from "./ProtectedRoutes/Dashboard/Dashboard";
 import ProtectedRoute from "./ProtectedRoutes/ProtectedRoute";
 import AuthRoute from "./ProtectedRoutes/AuthRoute";
 import MainLayout from "./Layout/MainLayout";
+import Transaction from "./ProtectedRoutes/Transaction/Transaction";
 
 const router = createBrowserRouter([
   {
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
           {
             path: "/dashboard",
             element: <Dashboard />,
+          },
+          {
+            path: "/transaction",
+            element: <Transaction />,
           },
         ],
       },

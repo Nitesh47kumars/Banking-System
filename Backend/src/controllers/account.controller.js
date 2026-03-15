@@ -40,7 +40,7 @@ const getAccountBalance = asyncHandler(async (req, res) => {
   const balance = await account.getBalance();
   return res
     .status(200)
-    .json(new ApiResponse(200, { balance }, "Balance Fetched Successfully"));
+    .json(new ApiResponse(200, balance , "Balance Fetched Successfully"));
 });
 
 export { createAccountController, getAllAccounts, getAccountBalance };

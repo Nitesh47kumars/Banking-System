@@ -9,6 +9,7 @@ import {
 import DashboardSample from "./DashboardSample";
 import AccountCard from "./AccountCard";
 import QuickInfo from "./QuickInfo";
+import Loading from "../../utils/Loading"
 
 import {
   RiArrowUpLine,
@@ -37,14 +38,14 @@ const Dashboard = () => {
     },
     {
       label: "Monthly Income",
-      value: "₹1,00,000",
+      value: balance?.totalCredit,
       icon: RiArrowDownLine,
       color: "text-emerald-400",
       bg: "bg-emerald-400/10",
     },
     {
       label: "Monthly Spent",
-      value: "₹18,430",
+      value: balance?.totalDebit,
       icon: RiArrowUpLine,
       color: "text-rose-400",
       bg: "bg-rose-400/10",
@@ -57,10 +58,11 @@ const Dashboard = () => {
       bg: "bg-blue-400/10",
     },
   ];
+
   return (
     <div>
       {loading || !account || !user ? (
-        <h1>Loading...</h1>
+        <Loading/>
       ) : (
         <div className="bg-black">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

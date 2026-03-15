@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import {ledgerModel} from "./ledger.model.js";
+import { ledgerModel } from "./ledger.model.js";
 
 const accountSchema = new Schema(
   {
@@ -49,16 +49,22 @@ accountSchema.methods.getBalance = async function () {
     {
       $project: {
         _id: 0,
+        totalCredit: "$totalCredit",
+        totalDebit: "$totalDebit",
         balance: { $subtract: ["$totalCredit", "$totalDebit"] },
       },
     },
   ]);
 
-  if(balanceData.length <= 0){
-    return 0;
+  if (balanceData.length === 0) {
+    return {
+      totalCredit: 0,
+      totalDebit: 0,
+      balance: 0
+    };
   }
 
-  return balanceData[0].balance
+  return balanceData[0];
 };
 
 export const accountModel = mongoose.model("account", accountSchema);

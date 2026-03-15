@@ -17,7 +17,8 @@ import {
   RiCopperCoinLine,
 } from "react-icons/ri";
 
-import Banner from "./Banner"
+import Banner from "./Banner";
+import QuickInfo from "./QuickInfo";
 
 /* ── Mock data (replace with real API later) ── */
 const mockTransactions = [
@@ -70,7 +71,6 @@ const quickStats = [
     icon: RiWalletLine,
     color: "text-amber-400",
     bg: "bg-amber-400/10",
-    change: "+2.4%",
   },
   {
     label: "Monthly Income",
@@ -78,7 +78,6 @@ const quickStats = [
     icon: RiArrowDownLine,
     color: "text-emerald-400",
     bg: "bg-emerald-400/10",
-    change: "+12%",
   },
   {
     label: "Monthly Spent",
@@ -86,7 +85,6 @@ const quickStats = [
     icon: RiArrowUpLine,
     color: "text-rose-400",
     bg: "bg-rose-400/10",
-    change: "-4.1%",
   },
   {
     label: "Transactions",
@@ -94,7 +92,6 @@ const quickStats = [
     icon: RiExchangeLine,
     color: "text-blue-400",
     bg: "bg-blue-400/10",
-    change: "This month",
   },
 ];
 
@@ -169,6 +166,7 @@ const DashboardSample = () => {
     .join("")
     .toUpperCase()
     .slice(0, 2);
+
   const joinDate = new Date(user.createdAt).toLocaleDateString("en-IN", {
     year: "numeric",
     month: "long",
@@ -177,16 +175,13 @@ const DashboardSample = () => {
 
   return (
     <div className="min-h-screen bg-[#0a0a0b] text-white">
-
       {/* ── Page Content ── */}
       <main className="max-w-6xl mx-auto px-6 py-8 space-y-8">
+        <Banner user={user} />
 
-        <Banner user={user}/>
-
-        {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {quickStats.map((s) => (
-            <StatCard key={s.label} {...s} />
+            <QuickInfo key={s.label} {...s} />
           ))}
         </div>
 

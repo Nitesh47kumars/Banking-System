@@ -30,5 +30,5 @@ export const getUserAccount = () => {
 }
 
 export const getUserBalance = (accountId)=>{
-  return api.get(`/api/account/${accountId}`)
+  return api.get(`/api/account/balance/${accountId}`)
 }

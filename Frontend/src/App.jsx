@@ -10,43 +10,43 @@ import ProtectedRoute from "./ProtectedRoutes/ProtectedRoute";
 import AuthRoute from "./ProtectedRoutes/AuthRoute";
 import MainLayout from "./Layout/MainLayout";
 
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <MainLayout />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
+      {
+        element: <AuthRoute />,
+        children: [
+          {
+            path: "/register",
+            element: <Register />,
+          },
+          {
+            path: "/login",
+            element: <Login />,
+          },
+        ],
+      },
+
+      {
+        element: <ProtectedRoute />,
+        children: [
+          {
+            path: "/dashboard",
+            element: <Dashboard />,
+          },
+        ],
+      },
+    ],
+  },
+]);
+
 const App = () => {
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <MainLayout />,
-      children: [
-        {
-          index: true,
-          element: <Home />,
-        },
-        {
-          element: <AuthRoute />,
-          children: [
-            {
-              path: "/register",
-              element: <Register />,
-            },
-            {
-              path: "/login",
-              element: <Login />,
-            },
-          ],
-        },
-
-        {
-          element: <ProtectedRoute />,
-          children: [
-            {
-              path: "/dashboard",
-              element: <Dashboard />,
-            },
-          ],
-        },
-      ],
-    },
-  ]);
-
   return <RouterProvider router={router} />;
 };
 

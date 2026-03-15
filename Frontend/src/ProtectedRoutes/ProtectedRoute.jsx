@@ -7,7 +7,7 @@ import Loading from "../utils/Loading"
 const ProtectedRoute = () => {
   
   const dispatch = useDispatch();
-  const { user, loading } = useSelector((state) => state.auth);
+  const { user, authChecked } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if(!user){
@@ -15,7 +15,7 @@ const ProtectedRoute = () => {
     }
   }, [dispatch]);
 
-  if (loading) return <Loading/>;
+  if (!authChecked) return <Loading/>;
   if (!user) {
     return <Navigate to="/login" replace />;
   }

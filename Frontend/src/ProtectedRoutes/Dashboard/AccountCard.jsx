@@ -1,53 +1,89 @@
 import { useSelector } from "react-redux";
+import {
+  RiShieldCheckLine,
+  RiUserLine,
+  RiMailLine,
+  RiIdCardLine,
+  RiCalendarLine,
+} from "react-icons/ri";
+const AccountCard = ({ user, account }) => {
+  const initials = user.name
+    ?.split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 
-const AccountCard = ({user, account}) => {
-    return (
-      <div className="w-[320px] bg-white border rounded-2xl shadow-sm p-5 hover:shadow-md transition">
-        
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-semibold">
-            {user.name.charAt(0)}
-          </div>
-  
-          <div>
-            <h3 className="text-base font-semibold">{user.name}</h3>
-            <p className="text-xs text-gray-500">{user.email}</p>
-          </div>
+  const joinDate = new Date(user.createdAt).toLocaleDateString("en-IN", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  return (
+    <div className="bg-white/3 border border-white/5 rounded-2xl p-6 flex flex-col gap-6 backdrop-blur-md hover:border-white/10 transition">
+      {/* Title */}
+      <h2 className="font-semibold text-white text-sm tracking-wide">
+        Account Details
+      </h2>
+
+      {/* Avatar Section */}
+      <div className="flex flex-col items-center gap-3 py-1">
+        <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-amber-400/20 to-amber-500/10 text-amber-400 text-lg font-bold grid place-items-center shadow-inner">
+          {initials}
         </div>
-  
-        {/* Divider */}
-        <div className="border-t my-3"></div>
-  
-        {/* Details */}
-        <div className="space-y-2 text-sm">
-  
-          <div className="flex justify-between">
-            <span className="text-gray-500">Account ID</span>
-            <span className="font-medium text-gray-700 text-xs">
-              {account._id.slice(-8)}
-            </span>
-          </div>
-  
-          <div className="flex justify-between">
-            <span className="text-gray-500">Status</span>
-            <span className="px-2 py-0.5 text-xs bg-green-100 text-green-700 rounded">
-              {account.status}
-            </span>
-          </div>
-  
-          <div className="flex justify-between">
-            <span className="text-gray-500">Member Since</span>
-            <span className="font-medium text-gray-700">
-              {new Date(account.createdAt).toLocaleDateString()}
-            </span>
-          </div>
-  
+
+        <div className="text-center">
+          <p className="font-semibold text-white">{user.name}</p>
+
+          <span className="mt-1 inline-flex items-center gap-1 text-xs text-emerald-400 bg-emerald-400/10 px-2.5 py-1 rounded-full">
+            <RiShieldCheckLine size={11} />
+            Verified
+          </span>
         </div>
-  
       </div>
-    );
-  };
-  
-  export default AccountCard;
-  
+
+      {/* Info */}
+      <div className="space-y-4 border-t border-white/5 pt-5">
+        {[
+          { icon: RiUserLine, label: "Full Name", value: user.name },
+          { icon: RiMailLine, label: "Email", value: user.email },
+          {
+            icon: RiIdCardLine,
+            label: "Account ID",
+            value: user._id?.toUpperCase(),
+            mono: true,
+          },
+          {
+            icon: RiCalendarLine,
+            label: "Member Since",
+            value: joinDate,
+          },
+        ].map(({ icon: Icon, label, value, mono }) => (
+          <div key={label} className="flex items-start gap-3 group">
+            {/* Icon */}
+            <div className="w-8 h-8 bg-white/5 rounded-lg grid place-items-center shrink-0 group-hover:bg-white/10 transition">
+              <Icon size={14} className="text-white/40" />
+            </div>
+
+            {/* Text */}
+            <div className="min-w-0">
+              <p className="text-xs text-white/30 group-hover:text-white/40 transition mb-0.5">
+                {label}
+              </p>
+              <p
+                className={`text-sm text-white/80 truncate ${
+                  mono ? "font-mono tracking-wide" : "font-medium"
+                }`}
+              >
+                {value}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default AccountCard;

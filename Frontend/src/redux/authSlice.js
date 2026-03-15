@@ -6,7 +6,7 @@ import {
   logoutUser,
   getUserBalance,
   createUserAccount,
-  getUserAccount
+  getUserAccount,
 } from "../api/axios";
 
 const initialState = {
@@ -14,6 +14,7 @@ const initialState = {
   account: null,
   balance: null,
   loading: true,
+  authChecked: false,
   error: null,
 };
 
@@ -90,6 +91,42 @@ export const createAccount = createAsyncThunk(
   }
 );
 
+export const initializeDashboard = createAsyncThunk(
+  "auth/initializeDashboard",
+  async (_, thunkAPI) => {
+    try {
+      // 1. Get user
+      const userRes = await getUserData();
+      const user = userRes.data.data;
+
+      // 2. Get or create account
+      let account;
+      try {
+        const accountRes = await createUserAccount();
+        account = accountRes.data.data;
+      } catch (err) {
+        if (err.response?.status === 409) {
+          const existing = await getUserAccount();
+          account = existing.data.data[0];
+        } else throw err;
+      }
+
+      // 3. Get balance
+      let balance = null;
+      try {
+        const balanceRes = await getUserBalance(account._id);
+        balance = balanceRes.data.data;
+      } catch (err) {
+        console.warn("Balance fetch failed:", err.message);
+      }
+
+      return { user, account, balance };
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -123,17 +160,19 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      //getUserData
+      //getUser
       .addCase(getUser.pending, (state) => {
         state.loading = true;
       })
       .addCase(getUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
+        state.authChecked = true;
       })
       .addCase(getUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.authChecked = true;
       })
 
       // LOGOUT
@@ -174,6 +213,21 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+
+      .addCase(initializeDashboard.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(initializeDashboard.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.account = action.payload.account;
+        state.balance = action.payload.balance;
+      })
+      .addCase(initializeDashboard.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 

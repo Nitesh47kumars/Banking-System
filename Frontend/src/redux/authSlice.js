@@ -15,7 +15,7 @@ const initialState = {
   account: null,
   balance: null,
   loading: true,
-  transaction: [],
+  transactionHistory: [],
   authChecked: false,
   error: null,
 };
@@ -65,18 +65,6 @@ export const logout = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
   }
 });
 
-export const getBalance = createAsyncThunk(
-  "auth/getbalance",
-  async (accountId, thunkAPI) => {
-    try {
-      const response = await getUserBalance(accountId);
-      return response.data.data;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.message);
-    }
-  }
-);
-
 export const createAccount = createAsyncThunk(
   "auth/createaccount",
   async (_, thunkAPI) => {
@@ -89,19 +77,6 @@ export const createAccount = createAsyncThunk(
         return existing.data.data[0];
       }
       return thunkAPI.rejectWithValue(err.message);
-    }
-  }
-);
-
-export const getTransactionHistory = createAsyncThunk(
-  "auth/transactionhistory",
-  async (_, thunkAPI) => {
-    try {
-      const response = await getUserTransactionHistory();
-      console.log(response.data);
-      return response.data;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err);
     }
   }
 );
@@ -136,15 +111,15 @@ export const initializeDashboard = createAsyncThunk(
       }
 
       //4. Transaction History
-      let transaction = [];
+      let transactionHistory = [];
       try {
-        const transactionRes = await getUserTransactionHistory();
-        transaction = transactionRes.data.data;
+        const transactionHistoryRes = await getUserTransactionHistory();
+        transactionHistory = transactionHistoryRes.data.data;
       } catch (err) {
         console.warn("Transaction History Failed:", err.message);
       }
 
-      return { user, account, balance, transaction };
+      return { user, account, balance, transactionHistory };
     } catch (err) {
       return thunkAPI.rejectWithValue(err.message);
     }
@@ -225,19 +200,6 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // GETBALANCE
-      .addCase(getBalance.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(getBalance.fulfilled, (state, action) => {
-        state.loading = false;
-        state.balance = action.payload;
-      })
-      .addCase(getBalance.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-
       .addCase(initializeDashboard.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -247,24 +209,12 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.account = action.payload.account;
         state.balance = action.payload.balance;
-        state.transaction = action.payload.transaction;
+        state.transactionHistory = action.payload.transactionHistory;
       })
       .addCase(initializeDashboard.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
-
-      .addCase(getTransactionHistory.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(getTransactionHistory.fulfilled, (state, action) => {
-        state.loading = false;
-        state.transaction = action.payload;
-      })
-      .addCase(getTransactionHistory.rejected, (state, action) => {
-        state.loading = false;
-        state.transaction = action.payload;
-      });
   },
 });
 

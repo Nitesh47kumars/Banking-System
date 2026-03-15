@@ -16,7 +16,7 @@ import Banner from "./Banner";
 import QuickActions from "./QuickAction";
 
 const Dashboard = () => {
-  const { user, account, balance, loading, transaction } = useSelector(
+  const { user, account, balance, loading, transactionHistory } = useSelector(
     (state) => state.auth
   );
   const dispatch = useDispatch();
@@ -25,7 +25,7 @@ const Dashboard = () => {
     dispatch(initializeDashboard());
   }, []);
 
-  console.log(transaction);
+  console.log(transactionHistory);
 
   const quickStats = [
     {
@@ -51,7 +51,7 @@ const Dashboard = () => {
     },
     {
       label: "Transactions",
-      value: transaction || 0,
+      value: transactionHistory || 0,
       icon: RiExchangeLine,
       color: "text-blue-400",
       bg: "bg-blue-400/10",
@@ -72,11 +72,11 @@ const Dashboard = () => {
               ))}
             </div>
             <div className="grid lg:grid-cols-3 gap-6">
-              <TransactionHistory transactions={transaction} />
+              <TransactionHistory transactions={transactionHistory} />
               <AccountCard user={user} />
             </div>
 
-            <QuickActions onTransaction={transaction} />
+            <QuickActions />
           </main>
         </>
       )}

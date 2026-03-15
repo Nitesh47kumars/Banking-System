@@ -6,6 +6,7 @@ import {
 import {
   createTransaction,
   createInitialFundsTransaction,
+  getTransactionHistory,
 } from "../controllers/transaction.controller.js";
 
 const transactionRoutes = Router();
@@ -16,6 +17,8 @@ const transactionRoutes = Router();
  */
 
 transactionRoutes.post("/", authMiddleware, createTransaction);
+
+transactionRoutes.get("/", authMiddleware, getTransactionHistory);
 
 /**
  * - POST /api/transactions/system/initial-funds

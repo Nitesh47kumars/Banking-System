@@ -286,4 +286,22 @@ const createInitialFundsTransaction = asyncHandler(async (req, res) => {
   }
 });
 
-export { createTransaction, createInitialFundsTransaction };
+const getTransactionHistory = asyncHandler(async (req, res) => {
+
+  const history = await ledgerModel
+    .find({ account: req.user.accountId })
+    .sort({ createdAt: -1 })
+    .populate("transaction");
+
+  console.log(history);
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, history, "History fetched successfully"));
+});
+
+export {
+  createTransaction,
+  createInitialFundsTransaction,
+  getTransactionHistory,
+};

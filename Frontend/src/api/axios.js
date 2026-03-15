@@ -32,3 +32,7 @@ export const getUserAccount = () => {
 export const getUserBalance = (accountId)=>{
   return api.get(`/api/account/balance/${accountId}`)
 }
+
+export const getUserTransactionHistory = ()=>{
+  return api.get("/")
+}

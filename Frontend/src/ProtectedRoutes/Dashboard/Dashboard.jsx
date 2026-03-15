@@ -1,15 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  createAccount,
-  getBalance,
-  getUser,
-  initializeDashboard,
-} from "../../redux/authSlice";
-import DashboardSample from "./DashboardSample";
+import { initializeDashboard } from "../../redux/authSlice";
 import AccountCard from "./AccountCard";
 import QuickInfo from "./QuickInfo";
-import Loading from "../../utils/Loading"
+import Loading from "../../utils/Loading";
 
 import {
   RiArrowUpLine,
@@ -17,9 +11,12 @@ import {
   RiWalletLine,
   RiExchangeLine,
 } from "react-icons/ri";
+import TransactionHistory from "./TransactionHistory";
+import Banner from "./Banner";
+import QuickActions from "./QuickAction";
 
 const Dashboard = () => {
-  const { user, account, balance, loading } = useSelector(
+  const { user, account, balance, loading, transaction } = useSelector(
     (state) => state.auth
   );
   const dispatch = useDispatch();
@@ -27,6 +24,8 @@ const Dashboard = () => {
   useEffect(() => {
     dispatch(initializeDashboard());
   }, []);
+
+  console.log(transaction);
 
   const quickStats = [
     {
@@ -52,7 +51,7 @@ const Dashboard = () => {
     },
     {
       label: "Transactions",
-      value: "24",
+      value: transaction || 0,
       icon: RiExchangeLine,
       color: "text-blue-400",
       bg: "bg-blue-400/10",
@@ -60,20 +59,27 @@ const Dashboard = () => {
   ];
 
   return (
-    <div>
+    <div className="min-h-screen bg-[#0a0a0b] text-white">
       {loading || !account || !user ? (
-        <Loading/>
+        <Loading />
       ) : (
-        <div className="bg-black">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {quickStats.map((s) => (
-              <QuickInfo key={s.label} {...s} />
-            ))}
-          </div>
-          <DashboardSample />
-        </div>
+        <>
+          <main className="max-w-6xl mx-auto px-6 py-8 space-y-8">
+            <Banner />
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {quickStats.map((s) => (
+                <QuickInfo key={s.label} {...s} />
+              ))}
+            </div>
+            <div className="grid lg:grid-cols-3 gap-6">
+              <TransactionHistory transactions={transaction} />
+              <AccountCard user={user} />
+            </div>
+
+            <QuickActions onTransaction={transaction} />
+          </main>
+        </>
       )}
-      <h1>asd</h1>
     </div>
   );
 };

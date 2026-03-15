@@ -7,6 +7,7 @@ import {
   getUserBalance,
   createUserAccount,
   getUserAccount,
+  getUserTransactionHistory,
 } from "../api/axios";
 
 const initialState = {
@@ -14,6 +15,7 @@ const initialState = {
   account: null,
   balance: null,
   loading: true,
+  transaction: [],
   authChecked: false,
   error: null,
 };
@@ -91,6 +93,19 @@ export const createAccount = createAsyncThunk(
   }
 );
 
+export const getTransactionHistory = createAsyncThunk(
+  "auth/transactionhistory",
+  async (_, thunkAPI) => {
+    try {
+      const response = await getUserTransactionHistory();
+      console.log(response.data);
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err);
+    }
+  }
+);
+
 export const initializeDashboard = createAsyncThunk(
   "auth/initializeDashboard",
   async (_, thunkAPI) => {
@@ -120,7 +135,16 @@ export const initializeDashboard = createAsyncThunk(
         console.warn("Balance fetch failed:", err.message);
       }
 
-      return { user, account, balance };
+      //4. Transaction History
+      let transaction = [];
+      try {
+        const transactionRes = await getUserTransactionHistory();
+        transaction = transactionRes.data.data;
+      } catch (err) {
+        console.warn("Transaction History Failed:", err.message);
+      }
+
+      return { user, account, balance, transaction };
     } catch (err) {
       return thunkAPI.rejectWithValue(err.message);
     }
@@ -223,10 +247,23 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.account = action.payload.account;
         state.balance = action.payload.balance;
+        state.transaction = action.payload.transaction;
       })
       .addCase(initializeDashboard.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      .addCase(getTransactionHistory.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getTransactionHistory.fulfilled, (state, action) => {
+        state.loading = false;
+        state.transaction = action.payload;
+      })
+      .addCase(getTransactionHistory.rejected, (state, action) => {
+        state.loading = false;
+        state.transaction = action.payload;
       });
   },
 });

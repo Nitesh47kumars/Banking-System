@@ -11,6 +11,7 @@ import AuthRoute from "./ProtectedRoutes/AuthRoute";
 import MainLayout from "./Layout/MainLayout";
 import Transaction from "./ProtectedRoutes/Transaction/Transaction";
 import RoleRoute from "./ProtectedRoutes/Transaction/RoleRoute";
+import CreateInitialFunds from "./ProtectedRoutes/Transaction/createInitialFunds";
 
 const router = createBrowserRouter([
   {
@@ -51,7 +52,7 @@ const router = createBrowserRouter([
             children: [
               {
                 path: "/initial-funds",
-                element: <Transaction />,
+                element: <CreateInitialFunds />,
               },
             ],
           },

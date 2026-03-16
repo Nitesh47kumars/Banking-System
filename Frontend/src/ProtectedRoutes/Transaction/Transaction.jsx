@@ -52,9 +52,11 @@ const Transaction = () => {
         {/* Success State Overlay */}
 
         {receipt && (
-          <>
-          <SuccessOverlay receipt={receipt} setReceipt={setReceipt} setForm={setForm}/>
-          </>
+            <SuccessOverlay
+              receipt={receipt}
+              setReceipt={setReceipt}
+              setForm={setForm}
+            />
         )}
 
         {/* Header */}
@@ -120,6 +122,7 @@ const Transaction = () => {
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-8 pr-4 text-xl font-mono focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 outline-none transition text-white"
               />
             </div>
+            
             {/* Quick Select Buttons */}
             <div className="flex gap-2 mt-2">
               {quickAmounts.map((val) => (

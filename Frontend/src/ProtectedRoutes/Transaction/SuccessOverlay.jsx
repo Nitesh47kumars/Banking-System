@@ -85,7 +85,7 @@ const SuccessOverlay = ({receipt, setReceipt, setForm}) => {
         }}
         className="mt-auto w-full py-4 bg-white hover:bg-slate-200 text-slate-950 rounded-2xl transition-all font-bold shadow-lg active:scale-95"
       >
-        Dashoboard
+        Dashboard
       </button>
     </div>
   );

@@ -21,7 +21,7 @@ const authMiddleware = asyncHandler(async (req, _, next) => {
   try {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-    const user = await userModel.findById(decoded._id);
+    const user = await userModel.findById(decoded._id).select("+systemUser");
     const account = await accountModel.findOne({ user: decoded._id });
 
     if (!user) {

@@ -29,7 +29,8 @@ const Dashboard = () => {
       dispatch(initializeDashboard());
   }, []);
 
-  console.log(transactions);
+  console.log("USER:",user);
+  console.table("TRANSAFER:",transactions);
 
   const quickStats = [
     {
@@ -69,7 +70,7 @@ const Dashboard = () => {
       ) : (
         <>
           <main className="max-w-6xl mx-auto px-6 py-8 space-y-8">
-            <Banner />
+            <Banner user={user} />
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {quickStats.map((s) => (
                 <QuickInfo key={s.label} {...s} />

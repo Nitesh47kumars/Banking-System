@@ -45,6 +45,10 @@ const router = createBrowserRouter([
             path: "/transaction",
             element: <Transaction />,
           },
+          {
+            path: "/initial-funds",
+            element: <Transaction />,
+          },
         ],
       },
     ],

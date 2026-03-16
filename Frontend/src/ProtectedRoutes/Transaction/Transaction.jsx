@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { initializeTransaction } from "../../redux/transactionSlice";
+import SuccessOverlay from "./SuccessOverlay";
 
 const Transaction = () => {
   const dispatch = useDispatch();
-  const [success, setSuccess] = useState(false);
+  const [receipt, setReceipt] = useState(null);
+
+  const { loading } = useSelector((state) => state.transaction);
 
   const [form, setForm] = useState({
     toAccount: "",
@@ -20,8 +23,6 @@ const Transaction = () => {
 
   const quickAmounts = [100, 200, 500, 1000, 10000];
 
-  // 69b6890abfd61813355ad005
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -32,12 +33,14 @@ const Transaction = () => {
     };
 
     try {
-      const result = await dispatch(initializeTransaction(transaction)).unwrap();
+      const result = await dispatch(
+        initializeTransaction(transaction)
+      ).unwrap();
 
       console.log(result);
-      setSuccess(true);
+      setReceipt(result.data);
     } catch (err) {
-      const message = await err.response?.data?.message || err.message;
+      const message = (await err.response?.data?.message) || err.message;
       console.error(message);
     }
   };
@@ -47,41 +50,11 @@ const Transaction = () => {
       {/* Main Card */}
       <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden relative">
         {/* Success State Overlay */}
-        {success && (
-          <div className="absolute inset-0 z-50 bg-slate-900 flex flex-col items-center justify-center p-6 text-center">
-            <div className="w-16 h-16 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center mb-4">
-              <svg
-                className="w-8 h-8"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M5 13l4 4L19 7"
-                ></path>
-              </svg>
-            </div>
-            <h2 className="text-2xl font-bold text-white">Transfer Sent!</h2>
-            <p className="text-slate-400 mt-2">
-              ₹{Number(form.amount).toLocaleString("en-IN")} is on its way to{" "}
-              {form.toAccount}
-            </p>
-            <button
-              onClick={() => {
-                setSuccess(false);
-                setForm({
-                  toAccount: "",
-                  amount: "",
-                });
-              }}
-              className="mt-8 w-full py-3 bg-slate-800 hover:bg-slate-700 rounded-xl transition font-medium text-white border border-slate-700"
-            >
-              Make another payment
-            </button>
-          </div>
+
+        {receipt && (
+          <>
+          <SuccessOverlay receipt={receipt} setReceipt={setReceipt} setForm={setForm}/>
+          </>
         )}
 
         {/* Header */}
@@ -183,9 +156,41 @@ const Transaction = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-4 rounded-xl shadow-lg shadow-amber-500/20 transform active:scale-[0.98] transition uppercase tracking-wider"
+            disabled={loading} // Disable button while processing
+            className={`w-full font-bold py-4 rounded-xl shadow-lg transform transition uppercase tracking-wider flex items-center justify-center gap-2
+        ${
+          loading
+            ? "bg-slate-700 text-slate-400 cursor-not-allowed"
+            : "bg-amber-500 hover:bg-amber-400 text-slate-900 active:scale-[0.98] shadow-amber-500/20"
+        }`}
           >
-            Confirm Transfer
+            {loading ? (
+              <>
+                <svg
+                  className="animate-spin h-5 w-5 text-slate-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Processing...
+              </>
+            ) : (
+              "Confirm Transfer"
+            )}
           </button>
         </form>
       </div>

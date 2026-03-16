@@ -51,7 +51,7 @@ const AccountCard = ({ user, account }) => {
           {
             icon: RiIdCardLine,
             label: "Account ID",
-            value: user._id?.toUpperCase(),
+            value: account?._id?.toUpperCase(),
             mono: true,
           },
           {

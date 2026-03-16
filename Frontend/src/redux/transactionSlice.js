@@ -39,7 +39,7 @@ export const initializeTransaction = createAsyncThunk(
   "transactions/transaction",
   async (transaction, thunkAPI) => {
     try {
-      const res =await makeTransaction(transaction);
+      const res = await makeTransaction(transaction);
       console.log(res.data)
       return res.data;
     } catch (err) {

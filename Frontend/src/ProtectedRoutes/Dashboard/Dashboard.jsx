@@ -79,7 +79,7 @@ const Dashboard = () => {
         </div>
         <div className="grid lg:grid-cols-3 gap-6">
           <TransactionHistory transactions={transactions} />
-          <AccountCard user={user} />
+          <AccountCard user={user} account={account}/>
         </div>
 
         <QuickActions />

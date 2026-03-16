@@ -1,5 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { CreateUserInitialFunds, getUserTransactionHistory } from "../api/axios";
+import {
+  CreateUserInitialFunds,
+  getUserTransactionHistory,
+  makeTransaction,
+} from "../api/axios";
 
 const initialState = {
   transactions: [],
@@ -31,6 +35,19 @@ export const createInitialFunds = createAsyncThunk(
   }
 );
 
+export const initializeTransaction = createAsyncThunk(
+  "transactions/transaction",
+  async (transaction, thunkAPI) => {
+    try {
+      const res =await makeTransaction(transaction);
+      console.log(res.data)
+      return res.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
 const transactionSlice = createSlice({
   name: "transaction",
   initialState,
@@ -38,6 +55,8 @@ const transactionSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
+
+      //FETCH TRANSACTION
       .addCase(fetchTransactions.pending, (state) => {
         state.loading = true;
       })
@@ -49,13 +68,27 @@ const transactionSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(createInitialFunds.pending, (state)=>{
+
+      //CREATE INITIAL FUNDS
+      .addCase(createInitialFunds.pending, (state) => {
         state.loading = true;
       })
-      .addCase(createInitialFunds.fulfilled, (state, action)=>{
+      .addCase(createInitialFunds.fulfilled, (state) => {
         state.loading = false;
       })
-      .addCase(createInitialFunds.rejected, (state, action)=>{
+      .addCase(createInitialFunds.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // INITIALIZE TRANSACTION
+      .addCase(initializeTransaction.pending, (state)=>{
+        state.loading = true;
+      })
+      .addCase(initializeTransaction.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(initializeTransaction.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

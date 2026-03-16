@@ -5,47 +5,48 @@ const api = axios.create({
   withCredentials: true,
 });
 
-
 // Auth APIs
 
-export const registerUser = (form) =>{
+export const registerUser = (form) => {
   return api.post("/api/auth/register", form);
-}
+};
 
-export const loginUser = (form) =>{
+export const loginUser = (form) => {
   return api.post("/api/auth/login", form);
-}
+};
 
-export const getUserData = () =>{
-  return api.get("/api/auth/getuserdata")
-}
+export const getUserData = () => {
+  return api.get("/api/auth/getuserdata");
+};
 
-export const logoutUser = () =>{
-  return api.post("/api/auth/logout")
-}
-
+export const logoutUser = () => {
+  return api.post("/api/auth/logout");
+};
 
 // Account APIs
 
-export const createUserAccount = ()=>{
-  return api.post("/api/account")
-}
+export const createUserAccount = () => {
+  return api.post("/api/account");
+};
 
 export const getUserAccount = () => {
   return api.get("/api/account");
-}
+};
 
-export const getUserBalance = (accountId)=>{
-  return api.get(`/api/account/balance/${accountId}`)
-}
-
+export const getUserBalance = (accountId) => {
+  return api.get(`/api/account/balance/${accountId}`);
+};
 
 // Transaction APIs
 
-export const getUserTransactionHistory = ()=>{
-  return api.get("/")
-}
+export const getUserTransactionHistory = () => {
+  return api.get("/");
+};
 
-export const CreateUserInitialFunds = (data)=>{
-  return api.post("/api/transactions/system/initial-funds", data)
-}
+export const CreateUserInitialFunds = (data) => {
+  return api.post("/api/transactions/system/initial-funds", data);
+};
+
+export const makeTransaction = (data) => {
+  return api.post("api/transactions/", data);
+};

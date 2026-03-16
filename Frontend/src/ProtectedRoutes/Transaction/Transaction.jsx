@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createInitialFunds } from "../../redux/transactionSlice";
+import { initializeTransaction } from "../../redux/transactionSlice";
 
 const Transaction = () => {
   const dispatch = useDispatch();
@@ -32,12 +32,13 @@ const Transaction = () => {
     };
 
     try {
-      const result = await dispatch(createInitialFunds(transaction)).unwrap();
+      const result = await dispatch(initializeTransaction(transaction)).unwrap();
 
       console.log(result);
       setSuccess(true);
     } catch (err) {
-      console.error(err);
+      const message = await err.response?.data?.message || err.message;
+      console.error(message);
     }
   };
 
@@ -157,7 +158,7 @@ const Transaction = () => {
                   }
                   className="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg transition border border-slate-700"
                 >
-                  +₹{val >= 1000 ? `${val / 1000}K` : val}
+                  ₹{val >= 1000 ? `${val / 1000}K` : val}
                 </button>
               ))}
             </div>

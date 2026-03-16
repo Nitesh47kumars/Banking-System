@@ -276,7 +276,7 @@ const createInitialFundsTransaction = asyncHandler(async (req, res) => {
       .json(
         new ApiResponse(
           201,
-          {transaction, fromUserAccount},
+          {transaction},
           "Initial Funds Transaction Completed Successfully"
         )
       );

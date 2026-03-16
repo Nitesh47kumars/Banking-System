@@ -5,6 +5,9 @@ const api = axios.create({
   withCredentials: true,
 });
 
+
+// Auth APIs
+
 export const registerUser = (form) =>{
   return api.post("/api/auth/register", form);
 }
@@ -21,6 +24,9 @@ export const logoutUser = () =>{
   return api.post("/api/auth/logout")
 }
 
+
+// Account APIs
+
 export const createUserAccount = ()=>{
   return api.post("/api/account")
 }
@@ -33,6 +39,13 @@ export const getUserBalance = (accountId)=>{
   return api.get(`/api/account/balance/${accountId}`)
 }
 
+
+// Transaction APIs
+
 export const getUserTransactionHistory = ()=>{
   return api.get("/")
+}
+
+export const CreateUserInitialFunds = (data)=>{
+  return api.post("/api/transactions/system/initial-funds", data)
 }

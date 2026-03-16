@@ -29,8 +29,9 @@ const Dashboard = () => {
       dispatch(initializeDashboard());
   }, []);
 
-  console.log("USER:",user);
-  console.table("TRANSAFER:",transactions);
+  // console.log("USER:",user);
+  // console.table("TRANSAFER:",transactions);
+
 
   const quickStats = [
     {

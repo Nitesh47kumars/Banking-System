@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { initializeDashboard } from "../../redux/authSlice";
+import { initializeDashboard } from "../../redux/dashboardThunk";
 import AccountCard from "./AccountCard";
 import QuickInfo from "./QuickInfo";
 import Loading from "../../utils/Loading";
@@ -11,21 +11,25 @@ import {
   RiWalletLine,
   RiExchangeLine,
 } from "react-icons/ri";
+
 import TransactionHistory from "./TransactionHistory";
 import Banner from "./Banner";
 import QuickActions from "./QuickAction";
 
 const Dashboard = () => {
-  const { user, account, balance, loading, transactionHistory } = useSelector(
-    (state) => state.auth
-  );
+  const user = useSelector((state) => state.auth.user);
+  const loading = useSelector((state) => state.auth.loading);
+  const account = useSelector((state) => state.account.account);
+  const balance = useSelector((state) => state.account.balance);
+  const transactions = useSelector((state) => state.transaction.transactions);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(initializeDashboard());
+      dispatch(initializeDashboard());
   }, []);
 
-  console.log(transactionHistory);
+  console.log(transactions);
 
   const quickStats = [
     {
@@ -51,7 +55,7 @@ const Dashboard = () => {
     },
     {
       label: "Transactions",
-      value: transactionHistory || 0,
+      value: transactions?.length || 0,
       icon: RiExchangeLine,
       color: "text-blue-400",
       bg: "bg-blue-400/10",
@@ -72,7 +76,7 @@ const Dashboard = () => {
               ))}
             </div>
             <div className="grid lg:grid-cols-3 gap-6">
-              <TransactionHistory transactions={transactionHistory} />
+              <TransactionHistory transactions={transactions} />
               <AccountCard user={user} />
             </div>
 

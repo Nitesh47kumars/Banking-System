@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { RiBankLine } from "react-icons/ri";
 
 import { useSelector, useDispatch } from "react-redux";
-import {login} from "../redux/authSlice"
+import { login } from "../redux/authSlice";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ const Login = () => {
   });
 
   const [error, setError] = useState({});
-  const {loading} = useSelector((state)=> state.auth);
+  const { loading } = useSelector((state) => state.auth);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -41,11 +41,11 @@ const Login = () => {
       return setError(validateError);
     }
 
-    const result = await dispatch(login(form));
-    console.log(result)
-
-    if (result.meta.requestStatus === "fulfilled") {
+    try {
+      await dispatch(login(form)).unwrap();
       navigate("/dashboard");
+    } catch (err) {
+      console.log("LOGIN ERROR:", err);
     }
   };
 

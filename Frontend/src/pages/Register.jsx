@@ -45,12 +45,12 @@ export default function Register() {
       return;
     }
 
-    const result = await dispatch(register(form));
+    try {
+      await dispatch(register(form)).unwrap();
 
-    console.log(result);
-
-    if (result.meta.requestStatus === "fulfilled") {
       navigate("/login");
+    } catch (err) {
+      console.log("MESSAGE:", err);
     }
   };
 

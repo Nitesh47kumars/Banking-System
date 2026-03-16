@@ -15,6 +15,7 @@ import {
 import TransactionHistory from "./TransactionHistory";
 import Banner from "./Banner";
 import QuickActions from "./QuickAction";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const user = useSelector((state) => state.auth.user);
@@ -24,33 +25,36 @@ const Dashboard = () => {
   const transactions = useSelector((state) => state.transaction.transactions);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
-      dispatch(initializeDashboard());
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    dispatch(initializeDashboard());
   }, []);
 
-  // console.log("USER:",user);
-  // console.table("TRANSAFER:",transactions);
-
+  if (loading) return <Loading />;
 
   const quickStats = [
     {
       label: "Total Balance",
-      value: balance?.balance,
+      value: balance?.balance || 0,
       icon: RiWalletLine,
       color: "text-amber-400",
       bg: "bg-amber-400/10",
     },
     {
       label: "Monthly Income",
-      value: balance?.totalCredit,
+      value: balance?.totalCredit || 0,
       icon: RiArrowDownLine,
       color: "text-emerald-400",
       bg: "bg-emerald-400/10",
     },
     {
       label: "Monthly Spent",
-      value: balance?.totalDebit,
+      value: balance?.totalDebit || 0,
       icon: RiArrowUpLine,
       color: "text-rose-400",
       bg: "bg-rose-400/10",
@@ -66,26 +70,20 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-[#0a0a0b] text-white">
-      {loading || !account || !user ? (
-        <Loading />
-      ) : (
-        <>
-          <main className="max-w-6xl mx-auto px-6 py-8 space-y-8">
-            <Banner user={user} />
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              {quickStats.map((s) => (
-                <QuickInfo key={s.label} {...s} />
-              ))}
-            </div>
-            <div className="grid lg:grid-cols-3 gap-6">
-              <TransactionHistory transactions={transactions} />
-              <AccountCard user={user} />
-            </div>
+      <main className="max-w-6xl mx-auto px-6 py-8 space-y-8">
+        <Banner user={user} />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {quickStats.map((s) => (
+            <QuickInfo key={s.label} {...s} />
+          ))}
+        </div>
+        <div className="grid lg:grid-cols-3 gap-6">
+          <TransactionHistory transactions={transactions} />
+          <AccountCard user={user} />
+        </div>
 
-            <QuickActions />
-          </main>
-        </>
-      )}
+        <QuickActions />
+      </main>
     </div>
   );
 };

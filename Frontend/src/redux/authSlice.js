@@ -15,7 +15,8 @@ export const register = createAsyncThunk(
       const res = await registerUser(formData);
       return res.data.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.message);
+      console.log(err);
+      return thunkAPI.rejectWithValue(err);
     }
   }
 );
@@ -56,6 +57,8 @@ const authSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
+
+      //REGISTER
       .addCase(register.pending, (state) => {
         state.loading = true;
       })
@@ -65,19 +68,23 @@ const authSlice = createSlice({
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload.message || "Something went Wrong";
       })
 
+      //LOGIN
       .addCase(login.fulfilled, (state, action) => {
         state.user = action.payload;
         state.loading = false;
       })
 
+      //GET USER
       .addCase(getUser.fulfilled, (state, action) => {
+        state.loading = false;
         state.user = action.payload;
         state.authChecked = true;
       })
 
+      //LOGOUT
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
       });

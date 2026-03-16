@@ -43,12 +43,31 @@ const accountSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
-      .addCase(createAccount.fulfilled, (state, action) => {
-        state.account = action.payload;
-      })
-      .addCase(fetchBalance.fulfilled, (state, action) => {
-        state.balance = action.payload;
-      });
+      // CREATE ACCOUNT
+    .addCase(createAccount.pending, (state) => {
+      state.loading = true;
+    })
+    .addCase(createAccount.fulfilled, (state, action) => {
+      state.loading = false;
+      state.account = action.payload;
+    })
+    .addCase(createAccount.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    })
+
+    // FETCH BALANCE
+    .addCase(fetchBalance.pending, (state) => {
+      state.loading = true;
+    })
+    .addCase(fetchBalance.fulfilled, (state, action) => {
+      state.loading = false;
+      state.balance = action.payload;
+    })
+    .addCase(fetchBalance.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    });
   },
 });
 

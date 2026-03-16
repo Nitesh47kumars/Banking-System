@@ -23,9 +23,6 @@ const SuccessOverlay = ({receipt, setReceipt, setForm}) => {
           </svg>
         </div>
         <h2 className="text-2xl font-bold text-white">Transaction Successful!</h2>
-        <p className="text-emerald-500 font-medium text-sm mt-1">
-          {receipt.status}
-        </p>
       </div>
 
       {/* Transaction Details Card */}

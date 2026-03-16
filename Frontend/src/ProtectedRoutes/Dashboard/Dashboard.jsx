@@ -16,6 +16,7 @@ import TransactionHistory from "./TransactionHistory";
 import Banner from "./Banner";
 import QuickActions from "./QuickAction";
 import { useNavigate } from "react-router-dom";
+import { fetchBalance } from "../../redux/accountSlice";
 
 const Dashboard = () => {
   const user = useSelector((state) => state.auth.user);
@@ -32,7 +33,11 @@ const Dashboard = () => {
       navigate("/login");
       return;
     }
-    dispatch(initializeDashboard());
+    try {
+      dispatch(fetchBalance(user.accountId)).unwrap();
+    } catch (err) {
+      console.log(err);
+    }
   }, []);
 
   if (loading) return <Loading />;
@@ -79,7 +84,7 @@ const Dashboard = () => {
         </div>
         <div className="grid lg:grid-cols-3 gap-6">
           <TransactionHistory transactions={transactions} />
-          <AccountCard user={user} account={account}/>
+          <AccountCard user={user} account={account} />
         </div>
 
         <QuickActions />

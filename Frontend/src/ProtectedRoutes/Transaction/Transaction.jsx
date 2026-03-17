@@ -66,23 +66,17 @@ const Transaction = () => {
         <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-800/30">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-1 px-3 py-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition-all text-slate-300 hover:text-white"
+            className="flex items-center px-3 py-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition-all text-slate-300 hover:text-white"
           >
             <RiArrowLeftLine size={18} />
-            <span className="text-sm">Back</span>
           </button>
 
-          {/* LOGO */}
           <div className="flex items-center gap-2">
             <div className="px-4 h-8 uppercase bg-amber-500 rounded-lg flex items-center justify-center text-slate-900 font-bold">
               Banking System
             </div>
-            {/* <span className="font-semibold tracking-wide uppercase">
-                Banking System
-              </span> */}
           </div>
 
-          {/* RIGHT SECTION */}
           <span className="text-[10px] bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded-full border border-emerald-500/20 uppercase font-bold tracking-widest text-center">
             Secure
           </span>

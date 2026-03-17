@@ -29,6 +29,7 @@ export const fetchBalance = createAsyncThunk(
   async (accountId, thunkAPI) => {
     try {
       const res = await getUserBalance(accountId);
+      console.log(res.data.data)
       return res.data.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.message);
@@ -67,7 +68,21 @@ const accountSlice = createSlice({
     .addCase(fetchBalance.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload;
-    });
+    })
+
+
+    
+
+      // // InitializeDashboard
+      // .addCase(initializeDashboard.pending, (state) => {
+      //   state.loading = true;
+      // })
+      // .addCase(initializeDashboard.fulfilled, (state) => {
+      //   state.loading = false;
+      // })
+      // .addCase(initializeDashboard.rejected, (state) => {
+      //   state.loading = false;
+      // });
   },
 });
 

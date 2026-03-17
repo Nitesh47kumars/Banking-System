@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { initializeDashboard } from "../../redux/dashboardThunk";
 import AccountCard from "./AccountCard";
 import QuickInfo from "./QuickInfo";
 import Loading from "../../utils/Loading";
@@ -19,28 +18,29 @@ import { useNavigate } from "react-router-dom";
 import { fetchBalance } from "../../redux/accountSlice";
 
 const Dashboard = () => {
-  const user = useSelector((state) => state.auth.user);
-  const authChecked = useSelector((state) => state.auth.authChecked);
+  const user = useSelector((state) => state.auth?.user);
   const account = useSelector((state) => state.account.account);
   const balance = useSelector((state) => state.account.balance);
   const transactions = useSelector((state) => state.transaction.transactions);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  
   useEffect(() => {
     if (!user) {
       navigate("/login");
       return;
     }
     try {
+      // dispatch(getUserData())
       dispatch(fetchBalance(user.accountId)).unwrap();
     } catch (err) {
       navigate("/login")
     }
   }, []);
-
-  if (!authChecked) return <Loading />;
+  
+  console.log(balance)
+  console.log(user)
 
   const quickStats = [
     {

@@ -3,7 +3,7 @@ import { RiExchangeLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 
 const Banner = ({user}) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   return (
     <div className="bg-linear-to-r from-amber-400/10 via-amber-400/5 to-transparent border border-amber-400/15 rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>

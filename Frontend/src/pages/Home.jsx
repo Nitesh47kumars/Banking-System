@@ -14,12 +14,6 @@ const Home = () => {
   const { user, loading } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate("/login");
-    }
-  }, [user, loading, navigate]);
-
   if (loading) {
     return (
       <div className="min-h-screen grid place-items-center text-white/50">

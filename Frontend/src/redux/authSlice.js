@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { registerUser, loginUser, logoutUser, getUserData } from "../api/axios";
-import { initializeDashboard } from "./dashboardThunk";
 
 const initialState = {
   user: null,
@@ -107,17 +106,6 @@ const authSlice = createSlice({
       //LOGOUT
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
-      })
-
-      // InitializeDashboard
-      .addCase(initializeDashboard.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(initializeDashboard.fulfilled, (state) => {
-        state.loading = false;
-      })
-      .addCase(initializeDashboard.rejected, (state) => {
-        state.loading = false;
       });
   },
 });

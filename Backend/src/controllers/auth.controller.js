@@ -53,13 +53,13 @@ const userLoginController = asyncHandler(async (req, res) => {
   const user = await userModel.findOne({ email }).select("+password");
 
   if (!user) {
-    throw new ApiError(401, "Invalid Credencials");
+    throw new ApiError(401, "User Not Found!");
   }
 
   const isValidPassword = await user.comparePassword(password);
 
   if (!isValidPassword) {
-    throw new ApiError(401, "Invalid Password");
+    throw new ApiError(401, "Invalid Password!");
   }
 
   const loginUser = user.toObject();

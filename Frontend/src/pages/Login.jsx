@@ -15,8 +15,8 @@ const Login = () => {
     password: "",
   });
 
-  const [error, setError] = useState({});
-  const { loading } = useSelector((state) => state.auth);
+  const [clientError, setClientError] = useState({});
+  const { loading, error } = useSelector((state) => state.auth);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -38,7 +38,7 @@ const Login = () => {
     const validateError = validate();
 
     if (Object.keys(validateError).length) {
-      return setError(validateError);
+      return setClientError(validateError);
     }
 
     try {
@@ -101,8 +101,8 @@ const Login = () => {
                   className="w-full border border-white/10 rounded-lg p-3 mt-1 bg-white/5 text-white placeholder-white/40 focus:border-amber-400 outline-none"
                 />
 
-                {error.email && (
-                  <p className="text-red-400 text-sm">{error.email}</p>
+                {clientError.email && (
+                  <p className="text-red-400 text-sm">{clientError.email}</p>
                 )}
               </div>
 
@@ -119,12 +119,18 @@ const Login = () => {
                   className="w-full border border-white/10 rounded-lg p-3 mt-1 bg-white/5 text-white placeholder-white/40 focus:border-amber-400 outline-none"
                 />
 
-                {(error.password || error.passwordlength) && (
+                {(clientError.password || clientError.passwordlength) && (
                   <p className="text-red-400 text-sm">
-                    {error.password || error.passwordlength}
+                    {clientError.password || clientError.passwordlength}
                   </p>
                 )}
               </div>
+
+              {error && (
+                <p className="text-red-400 text-sm text-center bg-red-400/10 border border-red-400/20 rounded-lg p-3">
+                  {error}
+                </p>
+              )}
 
               <button
                 type="submit"

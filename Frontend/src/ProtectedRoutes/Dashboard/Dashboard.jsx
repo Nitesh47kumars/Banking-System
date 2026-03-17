@@ -20,7 +20,7 @@ import { fetchBalance } from "../../redux/accountSlice";
 
 const Dashboard = () => {
   const user = useSelector((state) => state.auth.user);
-  const loading = useSelector((state) => state.auth.loading);
+  const authChecked = useSelector((state) => state.auth.authChecked);
   const account = useSelector((state) => state.account.account);
   const balance = useSelector((state) => state.account.balance);
   const transactions = useSelector((state) => state.transaction.transactions);
@@ -36,11 +36,11 @@ const Dashboard = () => {
     try {
       dispatch(fetchBalance(user.accountId)).unwrap();
     } catch (err) {
-      console.log(err);
+      navigate("/login")
     }
   }, []);
 
-  if (loading) return <Loading />;
+  if (!authChecked) return <Loading />;
 
   const quickStats = [
     {

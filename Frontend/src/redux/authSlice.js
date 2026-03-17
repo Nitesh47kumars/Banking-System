@@ -29,7 +29,9 @@ export const login = createAsyncThunk(
       const res = await loginUser(formData);
       return res.data.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.message);
+      const message =
+        err.response?.data?.message || err.message || "Login failed";
+      return thunkAPI.rejectWithValue(message);
     }
   }
 );
@@ -54,7 +56,11 @@ export const getUser = createAsyncThunk("auth/getUser", async (_, thunkAPI) => {
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    clearError: (state) => {
+      state.error = null;
+    },
+  },
 
   extraReducers: (builder) => {
     builder
@@ -65,7 +71,6 @@ const authSlice = createSlice({
       })
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
@@ -73,16 +78,30 @@ const authSlice = createSlice({
       })
 
       //LOGIN
+      .addCase(login.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(login.fulfilled, (state, action) => {
-        state.user = action.payload;
         state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Login failed";
       })
 
       //GET USER
+      .addCase(getUser.pending, (state, action) => {
+        state.authChecked = false;
+      })
       .addCase(getUser.fulfilled, (state, action) => {
-        state.loading = false;
         state.user = action.payload;
         state.authChecked = true;
+      })
+      .addCase(getUser.rejected, (state, action) => {
+        state.authChecked = true;
+        state.user = null;
       })
 
       //LOGOUT
@@ -103,4 +122,5 @@ const authSlice = createSlice({
   },
 });
 
+export const { clearError } = authSlice.actions;
 export default authSlice.reducer;

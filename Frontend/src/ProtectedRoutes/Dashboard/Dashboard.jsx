@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import AccountCard from "./AccountCard";
 import QuickInfo from "./QuickInfo";
-import Loading from "../../utils/Loading";
 
 import {
   RiArrowUpLine,
@@ -32,15 +31,12 @@ const Dashboard = () => {
       return;
     }
     try {
-      // dispatch(getUserData())
       dispatch(fetchBalance(user.accountId)).unwrap();
     } catch (err) {
       navigate("/login")
     }
   }, []);
   
-  console.log(balance)
-  console.log(user)
 
   const quickStats = [
     {

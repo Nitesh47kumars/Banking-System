@@ -8,11 +8,11 @@ import {
 } from "react-icons/ri";
 
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
 
 const Home = () => {
   const { user, loading } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  console.log(user)
 
   if (loading) {
     return (

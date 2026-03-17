@@ -4,6 +4,8 @@ import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { sendRegisterationEmail } from "../services/email.service.js";
 import { tokenBlacklistModel } from "../models/blacklist.model.js";
+import {accountModel} from "../models/account.model.js"
+
 /**
  * - User Register Controller
  * - POST /api/auth/register
@@ -50,11 +52,13 @@ const userRegisterationController = asyncHandler(async (req, res) => {
 const userLoginController = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await userModel.findOne({ email }).select("+password");
-
+  const user = await userModel.findOne({ email }).select("+password +systemUser");
+  
   if (!user) {
     throw new ApiError(401, "User Not Found!");
   }
+
+  const account = await accountModel.findOne({user: user._id});
 
   const isValidPassword = await user.comparePassword(password);
 
@@ -62,8 +66,11 @@ const userLoginController = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Invalid Password!");
   }
 
-  const loginUser = user.toObject();
-
+  const loginUser = {
+    ...user.toObject(),
+    accountId: account?._id,
+  }
+  
   delete loginUser.password;
 
   const token = await user.generateAccessToken();

@@ -10,12 +10,13 @@ import {
   RiExchangeLine,
 } from "react-icons/ri";
 
-import TransactionHistory from "./TransactionHistory";
+import TransactionHistory from "../Transaction/TransactionHistory/RecentTransactions";
 import Banner from "./Banner";
 import QuickActions from "./QuickAction";
 import { useNavigate } from "react-router-dom";
 import { fetchBalance } from "../../redux/accountSlice";
 import { fetchTransactions } from "../../redux/transactionSlice";
+import RecentTransactions from "../Transaction/TransactionHistory/RecentTransactions";
 
 const Dashboard = () => {
   const user = useSelector((state) => state.auth?.user);
@@ -88,7 +89,7 @@ const Dashboard = () => {
           ))}
         </div>
         <div className="grid lg:grid-cols-3 gap-6">
-          <TransactionHistory transactions={transactions} />
+          <RecentTransactions transactions={transactions} />
           <AccountCard user={user} account={account} />
         </div>
 

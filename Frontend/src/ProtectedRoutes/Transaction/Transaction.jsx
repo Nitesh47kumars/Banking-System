@@ -5,9 +5,10 @@ import SuccessOverlay from "./SuccessOverlay";
 import TransactionButton from "../../Components/TransactionButton";
 import { RiArrowLeftLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
+
 const Transaction = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [receipt, setReceipt] = useState(null);
 
   const { loading } = useSelector((state) => state.transaction);

@@ -40,7 +40,7 @@ export const getUserBalance = (accountId) => {
 // Transaction APIs
 
 export const getUserTransactionHistory = () => {
-  return api.get("/");
+  return api.get("/api/transactions");
 };
 
 export const CreateUserInitialFunds = (data) => {

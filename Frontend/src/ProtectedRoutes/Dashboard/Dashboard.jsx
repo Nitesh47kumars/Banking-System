@@ -15,6 +15,7 @@ import Banner from "./Banner";
 import QuickActions from "./QuickAction";
 import { useNavigate } from "react-router-dom";
 import { fetchBalance } from "../../redux/accountSlice";
+import { fetchTransactions } from "../../redux/transactionSlice";
 
 const Dashboard = () => {
   const user = useSelector((state) => state.auth?.user);
@@ -36,6 +37,14 @@ const Dashboard = () => {
       navigate("/login")
     }
   }, []);
+
+  useEffect(()=>{
+    try{
+      dispatch(fetchTransactions());
+    }catch(err){
+      console.log(err)
+    }
+  },[])
   
 
   const quickStats = [

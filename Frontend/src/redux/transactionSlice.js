@@ -40,8 +40,7 @@ export const initializeTransaction = createAsyncThunk(
   async (transaction, thunkAPI) => {
     try {
       const res = await makeTransaction(transaction);
-      console.log(res.data)
-      return res.data;
+      return res.data.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.message);
     }

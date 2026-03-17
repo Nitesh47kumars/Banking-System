@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const SuccessOverlay = ({receipt, setReceipt, setForm}) => {
+const SuccessOverlay = ({ receipt, setReceipt, setForm }) => {
   const navigate = useNavigate();
   return (
     <div className="absolute inset-0 z-50 bg-slate-900 flex flex-col p-6 animate-in fade-in zoom-in duration-300">
@@ -22,7 +22,9 @@ const SuccessOverlay = ({receipt, setReceipt, setForm}) => {
             />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-white">Transaction Successful!</h2>
+        <h2 className="text-2xl font-bold text-white">
+          Transaction Successful!
+        </h2>
       </div>
 
       {/* Transaction Details Card */}
@@ -72,18 +74,41 @@ const SuccessOverlay = ({receipt, setReceipt, setForm}) => {
       <p className="text-[10px] text-slate-600 text-center mt-6 uppercase tracking-tighter">
         Ref: {receipt.idempotencyKey}
       </p>
+      <div className="flex flex-col gap-4 mt-auto w-full">
+        <button
+          onClick={() => {
+            setReceipt(null);
+            setForm({ toAccount: "", amount: "" });
+            navigate("/transaction");
+          }}
+          className="w-full py-4 rounded-2xl font-bold tracking-wide 
+            bg-amber-400 text-slate-900 
+            hover:bg-amber-300 
+            shadow-[0_8px_30px_rgba(251,191,36,0.25)]
+            hover:shadow-[0_10px_40px_rgba(251,191,36,0.35)]
+            transition-all duration-300 active:scale-95"
+        >
+          Make Another Transaction
+        </button>
 
-      {/* Action Button - FIXED SYNTAX HERE */}
-      <button
-        onClick={() => {
-          setReceipt(null);
-          setForm({ toAccount: "", amount: "" });
-          navigate("/dashboard")
-        }}
-        className="mt-auto w-full py-4 bg-white hover:bg-slate-200 text-slate-950 rounded-2xl transition-all font-bold shadow-lg active:scale-95"
-      >
-        Dashboard
-      </button>
+        {/* DASHBOARD */}
+        <button
+          onClick={() => {
+            setReceipt(null);
+            setForm({ toAccount: "", amount: "" });
+            navigate("/dashboard");
+          }}
+          className="w-full py-4 rounded-2xl font-bold tracking-wide 
+            border border-amber-400/30 
+            text-amber-400 
+            bg-transparent 
+            hover:bg-amber-400/10 
+            hover:text-amber-300
+            transition-all duration-300 active:scale-95"
+        >
+          Go to Dashboard
+        </button>
+      </div>
     </div>
   );
 };

@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { initializeTransaction } from "../../redux/transactionSlice";
 import SuccessOverlay from "./SuccessOverlay";
-import TransactionButton from "../../Components/TransactionButton"
-
+import TransactionButton from "../../Components/TransactionButton";
+import { RiArrowLeftLine } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
 const Transaction = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const [receipt, setReceipt] = useState(null);
 
   const { loading } = useSelector((state) => state.transaction);
@@ -38,8 +40,7 @@ const Transaction = () => {
         initializeTransaction(transaction)
       ).unwrap();
 
-      console.log(result);
-      setReceipt(result.data);
+      setReceipt(result);
     } catch (err) {
       const message = (await err.response?.data?.message) || err.message;
       console.error(message);
@@ -53,23 +54,34 @@ const Transaction = () => {
         {/* Success State Overlay */}
 
         {receipt && (
-            <SuccessOverlay
-              receipt={receipt}
-              setReceipt={setReceipt}
-              setForm={setForm}
-            />
+          <SuccessOverlay
+            receipt={receipt}
+            setReceipt={setReceipt}
+            setForm={setForm}
+          />
         )}
 
         {/* Header */}
-        <div className="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-800/30">
+        <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-800/30">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-1 px-3 py-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition-all text-slate-300 hover:text-white"
+          >
+            <RiArrowLeftLine size={18} />
+            <span className="text-sm">Back</span>
+          </button>
+
+          {/* LOGO */}
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center text-slate-900 font-bold">
-              B/S
-            </div>
-            <span className="font-semibold tracking-wide uppercase">
+            <div className="px-4 h-8 uppercase bg-amber-500 rounded-lg flex items-center justify-center text-slate-900 font-bold">
               Banking System
-            </span>
+            </div>
+            {/* <span className="font-semibold tracking-wide uppercase">
+                Banking System
+              </span> */}
           </div>
+
+          {/* RIGHT SECTION */}
           <span className="text-[10px] bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded-full border border-emerald-500/20 uppercase font-bold tracking-widest text-center">
             Secure
           </span>
@@ -123,7 +135,7 @@ const Transaction = () => {
                 className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-8 pr-4 text-xl font-mono focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 outline-none transition text-white"
               />
             </div>
-            
+
             {/* Quick Select Buttons */}
             <div className="flex gap-2 mt-2">
               {quickAmounts.map((val) => (
@@ -158,7 +170,7 @@ const Transaction = () => {
           </div>
 
           {/* Submit Button */}
-          <TransactionButton loading={loading}/>
+          <TransactionButton loading={loading} />
         </form>
       </div>
     </div>

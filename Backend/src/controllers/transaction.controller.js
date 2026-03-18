@@ -87,7 +87,7 @@ const createTransaction = asyncHandler(async (req, res) => {
   ]);
 
   if (!fromUserAccount || !toUserAccount) {
-    throw new ApiError(400, "Invalid fromAccount and toAccount!");
+    throw new ApiError(400, "Invalid Account Detial");
   }
 
   if (

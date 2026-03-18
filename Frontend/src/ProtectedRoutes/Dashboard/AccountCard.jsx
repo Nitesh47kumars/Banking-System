@@ -52,7 +52,7 @@ const AccountCard = ({ user }) => {
           {
             icon: RiIdCardLine,
             label: "Account ID",
-            value: user?.accountId?.toUpperCase(),
+            value: user?.accountId?.toUpperCase() || "You Don't Account Yet!",
             mono: true,
           },
           {

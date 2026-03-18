@@ -28,7 +28,7 @@ const QuickActions = ({ onCreateAccount = "asd", onMore = "asd" }) => {
   ];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       {actions.map(({ icon: Icon, label, color, bg, action }) => (
         <button
           key={label}

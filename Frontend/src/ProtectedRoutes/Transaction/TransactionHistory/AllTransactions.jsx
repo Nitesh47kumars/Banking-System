@@ -22,7 +22,7 @@ const AllTransactions = () => {
           onClick={() => navigate("/dashboard")}
           className="flex items-center px-3 py-2 rounded-lg 
         bg-white/5 border border-white/10 
-        text-white/70 hover:text-white 
+        text-white/70 hover:text-white cursor-pointer 
         hover:bg-white/10 transition-all"
         >
           <RiArrowLeftLine size={18} />

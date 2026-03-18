@@ -16,7 +16,7 @@ const RecentTransactions = ({ transactions }) => {
 
         <button
           onClick={() => navigate("/transactions")}
-          className="text-xs text-amber-400 hover:text-amber-300 transition-colors"
+          className="text-xs cursor-pointer text-amber-400 hover:text-amber-300 transition-colors"
         >
           View all →
         </button>

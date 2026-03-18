@@ -2,6 +2,14 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import AccountCard from "./AccountCard";
 import QuickInfo from "./QuickInfo";
+import Banner from "./Banner";
+import QuickActions from "./QuickAction";
+import { useNavigate } from "react-router-dom";
+import { fetchAccount, fetchBalance } from "../../redux/accountSlice";
+import { fetchTransactions } from "../../redux/transactionSlice";
+import RecentTransactions from "../Transaction/TransactionHistory/RecentTransactions";
+import CreateAccount from "./AccountCreation";
+import DashboardSkeleton from "../../utils/DashboardSkeleton";
 
 import {
   RiArrowUpLine,
@@ -10,41 +18,28 @@ import {
   RiExchangeLine,
 } from "react-icons/ri";
 
-import Banner from "./Banner";
-import QuickActions from "./QuickAction";
-import { useNavigate } from "react-router-dom";
-import { fetchBalance } from "../../redux/accountSlice";
-import { fetchTransactions } from "../../redux/transactionSlice";
-import RecentTransactions from "../Transaction/TransactionHistory/RecentTransactions";
-
 const Dashboard = () => {
   const user = useSelector((state) => state.auth?.user);
+  const { account, loading } = useSelector((state) => state.account);
   const balance = useSelector((state) => state.account.balance);
   const transactions = useSelector((state) => state.transaction.transactions);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     if (!user) {
       navigate("/login");
       return;
     }
-    try {
-      dispatch(fetchBalance(user.accountId)).unwrap();
-    } catch (err) {
-      navigate("/login")
-    }
-  }, []);
-  
-  useEffect(()=>{
-    try{
-      dispatch(fetchTransactions());
-    }catch(err){
-      console.log(err)
-    }
-  },[])
-  
+    dispatch(fetchAccount());
+  }, [user]);
+
+  useEffect(() => {
+    if (!account?._id) return;
+    dispatch(fetchBalance(account._id));
+    dispatch(fetchTransactions());
+  }, [account?._id]);
 
   const quickStats = [
     {
@@ -81,17 +76,25 @@ const Dashboard = () => {
     <div className="min-h-screen bg-[#0a0a0b] text-white">
       <main className="max-w-6xl mx-auto px-6 py-8 space-y-8">
         <Banner user={user} />
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {quickStats.map((s) => (
-            <QuickInfo key={s.label} {...s} />
-          ))}
-        </div>
-        <div className="grid lg:grid-cols-3 gap-6">
-          <RecentTransactions transactions={transactions} />
-          <AccountCard user={user}/>
-        </div>
 
-        <QuickActions />
+        {loading ? (
+          <DashboardSkeleton />
+        ) : !account ? (
+          <CreateAccount />
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {quickStats.map((s) => (
+                <QuickInfo key={s.label} {...s} />
+              ))}
+            </div>
+            <div className="grid lg:grid-cols-3 gap-6">
+              <RecentTransactions transactions={transactions} />
+              <AccountCard user={user} />
+            </div>
+            <QuickActions />
+          </>
+        )}
       </main>
     </div>
   );

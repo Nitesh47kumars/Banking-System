@@ -6,7 +6,8 @@ import {
   RiIdCardLine,
   RiCalendarLine,
 } from "react-icons/ri";
-const AccountCard = ({ user, account }) => {
+
+const AccountCard = ({ user }) => {
   const initials = user.name
     ?.split(" ")
     .map((n) => n[0])
@@ -51,7 +52,7 @@ const AccountCard = ({ user, account }) => {
           {
             icon: RiIdCardLine,
             label: "Account ID",
-            value: account?._id?.toUpperCase(),
+            value: user?.accountId?.toUpperCase(),
             mono: true,
           },
           {

@@ -44,7 +44,7 @@ const Navbar = () => {
           <>
             <button
               onClick={() => navigate("/dashboard")}
-              className="flex items-center gap-2.5 border border-white/8 rounded-xl px-1 pr-2.5 py-1"
+              className="flex items-center gap-2.5 cursor-pointer border border-white/8 rounded-xl px-1 pr-2.5 py-1"
             >
               <div className="w-7 h-7 rounded-lg bg-amber-400/20 text-amber-400 text-xs font-bold grid place-items-center">
                 {initials}
@@ -56,7 +56,7 @@ const Navbar = () => {
 
             <button
               onClick={onHandleLogout}
-              className="flex items-center gap-1.5 px-3 h-9 rounded-xl border border-white/10 text-white/60 hover:text-rose-400 hover:border-rose-500/40 hover:bg-linear-to-r hover:from-rose-500/10 hover:to-transparent transition-all duration-200"
+              className="flex items-center gap-1.5 cursor-pointer px-3 h-9 rounded-xl border border-white/10 text-white/60 hover:text-rose-400 hover:border-rose-500/40 hover:bg-linear-to-r hover:from-rose-500/10 hover:to-transparent transition-all duration-200"
             >
               <RiLogoutBoxLine size={16} />
               <span className="text-sm font-medium">Logout</span>
@@ -67,7 +67,7 @@ const Navbar = () => {
             {/* Login */}
             <button
               onClick={() => navigate("/login")}
-              className="px-4 py-2 text-sm border border-white/10 rounded-lg text-white/70 hover:text-white hover:border-white/30 transition"
+              className="px-4 py-2 text-sm border cursor-pointer border-white/10 rounded-lg text-white/70 hover:text-white hover:border-white/30 transition"
             >
               Login
             </button>
@@ -75,7 +75,7 @@ const Navbar = () => {
             {/* Create Account */}
             <button
               onClick={() => navigate("/register")}
-              className="px-4 py-2 text-sm bg-amber-400 text-black rounded-lg font-medium hover:bg-amber-300 transition"
+              className="px-4 py-2 text-sm cursor-pointer bg-amber-400 text-black rounded-lg font-medium hover:bg-amber-300 transition"
             >
               Create Account
             </button>

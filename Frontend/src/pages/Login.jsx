@@ -134,7 +134,7 @@ const Login = () => {
 
               <button
                 type="submit"
-                className="w-full bg-amber-400 text-black py-3 rounded-lg font-semibold hover:bg-amber-300"
+                className="w-full bg-amber-400 cursor-pointer text-black py-3 rounded-lg font-semibold hover:bg-amber-300"
               >
                 {loading ? "Logging in..." : "Login"}
               </button>

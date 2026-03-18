@@ -5,7 +5,7 @@ const TransactionButton = ({loading}) => {
     <button
       type="submit"
       disabled={loading} // Disable button while processing
-      className={`w-full font-bold py-4 rounded-xl shadow-lg transform transition uppercase tracking-wider flex items-center justify-center gap-2
+      className={`w-full font-bold py-4 cursor-pointer rounded-xl shadow-lg transform transition uppercase tracking-wider flex items-center justify-center gap-2
         ${
           loading
             ? "bg-slate-700 text-slate-400 cursor-not-allowed"

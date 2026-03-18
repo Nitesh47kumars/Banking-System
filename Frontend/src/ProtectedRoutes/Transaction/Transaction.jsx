@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { initializeTransaction } from "../../redux/transactionSlice";
 import SuccessOverlay from "./SuccessOverlay";
@@ -11,19 +11,20 @@ const Transaction = () => {
   const navigate = useNavigate();
   const [receipt, setReceipt] = useState(null);
 
-  const { loading } = useSelector((state) => state.transaction);
+  const { loading, error } = useSelector((state) => state.transaction);
 
+  
   const [form, setForm] = useState({
     toAccount: "",
     amount: "",
   });
 
+  const idempotencyKey = useMemo(() => crypto.randomUUID(), [form.toAccount, form.amount]);
+
   const onHandleChange = (e) => {
     const { name, value } = e.target;
     return setForm((prev) => ({ ...prev, [name]: value }));
   };
-
-  const [idempotencyKey] = useState(() => crypto.randomUUID());
 
   const quickAmounts = [100, 200, 500, 1000, 10000];
 
@@ -33,7 +34,7 @@ const Transaction = () => {
     const transaction = {
       toAccount: form.toAccount,
       amount: Number(form.amount),
-      idempotencyKey,
+      idempotencyKey
     };
 
     try {
@@ -44,7 +45,7 @@ const Transaction = () => {
       setReceipt(result);
     } catch (err) {
       const message = (await err.response?.data?.message) || err.message;
-      console.error(message);
+      console.error(err);
     }
   };
 
@@ -66,7 +67,7 @@ const Transaction = () => {
         <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-800/30">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center px-3 py-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition-all text-slate-300 hover:text-white"
+            className="flex items-center px-3 cursor-pointer py-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition-all text-slate-300 hover:text-white"
           >
             <RiArrowLeftLine size={18} />
           </button>
@@ -163,6 +164,28 @@ const Transaction = () => {
               </span>
             </div>
           </div>
+          {error?.message && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md mt-3">
+              <div className="flex items-center gap-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mt-0.5 text-red-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z"
+                  />
+                </svg>
+                {/* <span className="font-semibold">Error:</span> */}
+                <span className="text-sm">{error.message}</span>
+              </div>
+            </div>
+          )}
 
           {/* Submit Button */}
           <TransactionButton loading={loading} />

@@ -18,7 +18,7 @@ export const fetchTransactions = createAsyncThunk(
       const res = await getUserTransactionHistory();
       return res.data.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.message);
+      return thunkAPI.rejectWithValue(err.response?.data);
     }
   }
 );
@@ -42,7 +42,8 @@ export const initializeTransaction = createAsyncThunk(
       const res = await makeTransaction(transaction);
       return res.data.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.message);
+      console.log(err.response?.data)
+      return thunkAPI.rejectWithValue(err.response?.data);
     }
   }
 );
@@ -89,7 +90,7 @@ const transactionSlice = createSlice({
       })
       .addCase(initializeTransaction.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || action.error?.message;
       })
   },
 });

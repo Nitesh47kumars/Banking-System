@@ -18,7 +18,7 @@ const Banner = ({user}) => {
       <div className="flex items-center gap-2">
         <button
         onClick={()=>navigate(user.systemUser ? "/initial-funds": "/transaction")}
-        className="flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-black text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors">
+        className="flex items-center gap-2 cursor-pointer bg-amber-400 hover:bg-amber-300 text-black text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors">
           <RiExchangeLine size={15} /> {user.systemUser ? "Create New Fund" : "New Transaction"}
         </button>
       </div>

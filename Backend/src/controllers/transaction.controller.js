@@ -40,19 +40,12 @@ const createTransaction = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Cannot transfer to same account");
   }
 
-  const fromUserAccount = await accountModel.findById(fromAccount);
-  const toUserAccount = await accountModel.findById(toAccount);
-
-  if (!fromUserAccount || !toUserAccount) {
-    throw new ApiError(400, "Invalid fromAccount and toAccount!");
-  }
-
   /**
    *  2. Validate idempotencyKey
    */
 
   const isTransactionAlreadyExist = await transactionModel.findOne({
-    idempotencyKey: idempotencyKey,
+    idempotencyKey,
   });
 
   if (isTransactionAlreadyExist) {
@@ -88,6 +81,15 @@ const createTransaction = asyncHandler(async (req, res) => {
    *  3. Check Account Status
    */
 
+  const [fromUserAccount, toUserAccount] = await Promise.all([
+    accountModel.findById(fromAccount),
+    accountModel.findById(toAccount),
+  ]);
+
+  if (!fromUserAccount || !toUserAccount) {
+    throw new ApiError(400, "Invalid fromAccount and toAccount!");
+  }
+
   if (
     fromUserAccount.status !== "ACTIVE" ||
     toUserAccount.status !== "ACTIVE"
@@ -99,81 +101,86 @@ const createTransaction = asyncHandler(async (req, res) => {
   }
 
   /**
-   *  4. Drive Sender Balace from ledger
-   */
-
-  const balance = await fromUserAccount.getBalance();
-
-  if (balance < amount) {
-    throw new ApiError(
-      400,
-      `Insufficient Balance.Current balance is ${balance}, Requested amount is ${amount}`
-    );
-  }
-
-  /**
    *  5.
    */
 
   let transaction = null;
-
+  const session = await mongoose.startSession();
   try {
-    const session = await mongoose.startSession();
-    session.startTransaction();
+    await session.withTransaction(async () => {
+      transaction = (
+        await transactionModel.create(
+          [
+            {
+              fromAccount,
+              toAccount,
+              amount: amountNumber,
+              status: "PENDING",
+              idempotencyKey,
+            },
+          ],
+          { session }
+        )
+      )[0];
 
-    transaction = (
-      await transactionModel.create(
+      const senderAccount = await accountModel
+        .findById(fromAccount)
+        .session(session);
+
+      const balance = await senderAccount.getBalance({ session });
+
+      if (balance.balance < amountNumber) {
+        throw new ApiError(
+          400,
+          `Insufficient balance. Available: ₹${balance.balance}`
+        );
+      }
+
+      await ledgerModel.create(
         [
           {
-            fromAccount,
-            toAccount,
-            amount,
-            status: "PENDING",
-            idempotencyKey,
+            account: fromAccount,
+            amount: amountNumber,
+            transaction: transaction._id,
+            type: "DEBIT",
           },
         ],
         { session }
-      )
-    )[0];
+      );
 
-    await ledgerModel.create(
-      [
-        {
-          account: fromAccount,
-          amount: amount,
-          transaction: transaction._id,
-          type: "DEBIT",
-        },
-      ],
-      { session }
-    );
+      await (() => {
+        return Promise.resolve((resolve) => setTimeout(resolve, 15 * 1000));
+      })();
 
-    await (() => {
-      return new Promise((resolve) => setTimeout(resolve, 15 * 1000));
-    })();
+      await ledgerModel.create(
+        [
+          {
+            account: toAccount,
+            amount: amountNumber,
+            transaction: transaction._id,
+            type: "CREDIT",
+          },
+        ],
+        { session }
+      );
 
-    await ledgerModel.create(
-      [
-        {
-          account: toAccount,
-          amount: amount,
-          transaction: transaction._id,
-          type: "CREDIT",
-        },
-      ],
-      { session }
-    );
+      await transactionModel.findByIdAndUpdate(
+        transaction._id,
+        { status: "COMPLETED" },
+        { session, new: true }
+      );
+    });
+  } catch (err) {
+    if (transaction?._id) {
+      await transactionModel.findByIdAndUpdate(transaction._id, {
+        status: "FAILED",
+      });
+    }
 
-    await transactionModel.findByIdAndUpdate(
-      transaction._id,
-      { status: "COMPLETED" },
-      { session }
-    );
-
-    await session.commitTransaction();
+    if (err instanceof ApiError) throw err;
+    throw new ApiError(500, "Transaction failed. Please try again.");
+  } finally {
     await session.endSession();
-  } catch (e) {
-    throw new ApiError(400, "Transaction is PENDING due to Some Issue");
   }
 
   await sendTransactionSuccessEmail(
@@ -276,7 +283,7 @@ const createInitialFundsTransaction = asyncHandler(async (req, res) => {
       .json(
         new ApiResponse(
           201,
-          {transaction},
+          { transaction },
           "Initial Funds Transaction Completed Successfully"
         )
       );
@@ -287,7 +294,6 @@ const createInitialFundsTransaction = asyncHandler(async (req, res) => {
 });
 
 const getTransactionHistory = asyncHandler(async (req, res) => {
-
   const history = await ledgerModel
     .find({ account: req.user.accountId })
     .sort({ createdAt: -1 })

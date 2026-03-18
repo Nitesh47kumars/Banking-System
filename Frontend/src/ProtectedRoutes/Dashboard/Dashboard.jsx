@@ -10,7 +10,6 @@ import {
   RiExchangeLine,
 } from "react-icons/ri";
 
-import TransactionHistory from "../Transaction/TransactionHistory/RecentTransactions";
 import Banner from "./Banner";
 import QuickActions from "./QuickAction";
 import { useNavigate } from "react-router-dom";
@@ -20,7 +19,6 @@ import RecentTransactions from "../Transaction/TransactionHistory/RecentTransact
 
 const Dashboard = () => {
   const user = useSelector((state) => state.auth?.user);
-  const account = useSelector((state) => state.account.account);
   const balance = useSelector((state) => state.account.balance);
   const transactions = useSelector((state) => state.transaction.transactions);
 
@@ -38,7 +36,7 @@ const Dashboard = () => {
       navigate("/login")
     }
   }, []);
-
+  
   useEffect(()=>{
     try{
       dispatch(fetchTransactions());
@@ -90,7 +88,7 @@ const Dashboard = () => {
         </div>
         <div className="grid lg:grid-cols-3 gap-6">
           <RecentTransactions transactions={transactions} />
-          <AccountCard user={user} account={account} />
+          <AccountCard user={user}/>
         </div>
 
         <QuickActions />

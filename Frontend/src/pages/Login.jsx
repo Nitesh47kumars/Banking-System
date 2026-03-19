@@ -7,9 +7,9 @@ import { login } from "../redux/authSlice";
 
 const Login = () => {
   const navigate = useNavigate();
-
   const dispatch = useDispatch();
 
+  const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -110,14 +110,24 @@ const Login = () => {
               <div>
                 <label className="text-sm text-white/60">Password</label>
 
-                <input
-                  name="password"
-                  value={form.password}
-                  onChange={handleChange}
-                  type="password"
-                  placeholder="••••••••"
-                  className="w-full border border-white/10 rounded-lg p-3 mt-1 bg-white/5 text-white placeholder-white/40 focus:border-amber-400 outline-none"
-                />
+                <div className="relative mt-1">
+                  <input
+                    name="password"
+                    value={form.password}
+                    onChange={handleChange}
+                    type={showPassword ? "text" : "password"} // ✅ FIXED
+                    placeholder="••••••••"
+                    className="w-full border border-white/10 rounded-lg p-3 pr-14 bg-white/5 text-white placeholder-white/40 focus:border-amber-400 outline-none"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-3 flex items-center text-sm text-white/40 hover:text-white"
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
 
                 {(clientError.password || clientError.passwordlength) && (
                   <p className="text-red-400 text-sm">

@@ -41,6 +41,9 @@ const Dashboard = () => {
     dispatch(fetchTransactions());
   }, [account?._id]);
 
+  console.log("USER:", user);
+  console.log("ACCOUNT:", account);
+
   const quickStats = [
     {
       label: "Total Balance",

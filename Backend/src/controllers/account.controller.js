@@ -19,11 +19,11 @@ const createAccountController = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, account, "Account Created Successfully."));
 });
 
-const getAllAccounts = asyncHandler(async (req, res) => {
-  const accounts = await accountModel.find();
+const getAccounts = asyncHandler(async (req, res) => {
+  const accounts = await accountModel.find({user: req.user?._id});
   return res
     .status(200)
-    .json(new ApiResponse(200, accounts, "All Accounts Fetch Successfully."));
+    .json(new ApiResponse(200, accounts, "Accounts Fetch Successfully."));
 });
 
 const getAccountBalance = asyncHandler(async (req, res) => {
@@ -43,4 +43,4 @@ const getAccountBalance = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, balance , "Balance Fetched Successfully"));
 });
 
-export { createAccountController, getAllAccounts, getAccountBalance };
+export { createAccountController, getAccounts, getAccountBalance };

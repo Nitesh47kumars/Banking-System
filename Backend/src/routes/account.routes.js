@@ -2,7 +2,7 @@ import { Router } from "express";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 import {
   createAccountController,
-  getAllAccounts,
+  getAccounts,
   getAccountBalance
 } from "../controllers/account.controller.js";
 
@@ -21,7 +21,7 @@ router.post("/", authMiddleware, createAccountController);
  *  - GET All accounts of the logged-in user
  *  - Protected Route
  */
-router.get("/", authMiddleware, getAllAccounts);
+router.get("/", authMiddleware, getAccounts);
 
 /**
  *  - GET /api/accounts/balance/:accountId

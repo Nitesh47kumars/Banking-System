@@ -48,7 +48,7 @@ export default function Register() {
     try {
       await dispatch(register(form)).unwrap();
 
-      navigate("/login");
+      navigate("/dashboard");
     } catch (err) {
       console.log("MESSAGE:", err);
     }
@@ -133,6 +133,8 @@ export default function Register() {
                 <p className="text-red-400 text-sm">{errors.password}</p>
               )}
             </div>
+              
+            <div className="relative">
 
             <input
               type={showPassword ? "text" : "password"}
@@ -141,7 +143,15 @@ export default function Register() {
               value={form.confirmPassword}
               onChange={onHandleChange}
               className="w-full border border-white/10 p-3 rounded-lg bg-white/5 text-white placeholder-white/40 focus:border-amber-400 outline-none"
-            />
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-3 text-sm text-white/40"
+                >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+              </div>
 
             {errors.confirmPassword && (
               <p className="text-red-400 text-sm">{errors.confirmPassword}</p>

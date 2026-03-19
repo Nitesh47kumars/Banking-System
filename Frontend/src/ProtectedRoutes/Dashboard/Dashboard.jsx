@@ -41,9 +41,6 @@ const Dashboard = () => {
     dispatch(fetchTransactions());
   }, [account?._id]);
 
-  console.log("USER:", user);
-  console.log("ACCOUNT:", account);
-
   const quickStats = [
     {
       label: "Total Balance",
@@ -95,7 +92,7 @@ const Dashboard = () => {
               <RecentTransactions transactions={transactions} />
               <AccountCard user={user} account={account._id} />
             </div>
-            <QuickActions />
+            <QuickActions/>
           </>
         )}
       </main>

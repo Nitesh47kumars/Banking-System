@@ -115,7 +115,7 @@ const Login = () => {
                     name="password"
                     value={form.password}
                     onChange={handleChange}
-                    type={showPassword ? "text" : "password"} // ✅ FIXED
+                    type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     className="w-full border border-white/10 rounded-lg p-3 pr-14 bg-white/5 text-white placeholder-white/40 focus:border-amber-400 outline-none"
                   />

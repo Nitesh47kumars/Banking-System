@@ -1,5 +1,6 @@
 import { RiExchangeLine, RiAddCircleLine, RiMoreLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
+import { FaHistory } from "react-icons/fa";
 
 const QuickActions = ({ onCreateAccount = "asd", onMore = "asd" }) => {
   const navigate = useNavigate();
@@ -12,18 +13,18 @@ const QuickActions = ({ onCreateAccount = "asd", onMore = "asd" }) => {
       action: "/transaction",
     },
     {
-      icon: RiAddCircleLine,
-      label: "Create Account",
+      icon: FaHistory,
+      label: "History",
       color: "text-emerald-400",
       bg: "bg-emerald-400/10",
-      action: onCreateAccount,
+      action: "/transactions",
     },
     {
       icon: RiMoreLine,
       label: "More Options",
       color: "text-violet-400",
       bg: "bg-violet-400/10",
-      action: onMore,
+      action: "/moreoptions",
     },
   ];
 

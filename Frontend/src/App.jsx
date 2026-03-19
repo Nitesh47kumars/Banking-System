@@ -13,7 +13,7 @@ import Transaction from "./ProtectedRoutes/Transaction/Transaction";
 import RoleRoute from "./ProtectedRoutes/Transaction/RoleRoute";
 import CreateInitialFunds from "./ProtectedRoutes/Transaction/createInitialFunds";
 import AllTransactions from "./ProtectedRoutes/Transaction/TransactionHistory/AllTransactions";
-
+import MoreOptions from "./ProtectedRoutes/MoreOptions";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -51,6 +51,10 @@ const router = createBrowserRouter([
           {
             path: "/transactions",
             element: <AllTransactions />,
+          },
+          {
+            path: "/moreoptions",
+            element: <MoreOptions />,
           },
           {
             element: <RoleRoute />,

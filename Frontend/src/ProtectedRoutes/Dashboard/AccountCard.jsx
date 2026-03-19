@@ -7,7 +7,7 @@ import {
   RiCalendarLine,
 } from "react-icons/ri";
 
-const AccountCard = ({ user }) => {
+const AccountCard = ({ user , account}) => {
   const initials = user.name
     ?.split(" ")
     .map((n) => n[0])
@@ -52,7 +52,7 @@ const AccountCard = ({ user }) => {
           {
             icon: RiIdCardLine,
             label: "Account ID",
-            value: user?.accountId?.toUpperCase() || "You Don't Account Yet!",
+            value: account?.toUpperCase() || "You Don't Account Yet!",
             mono: true,
           },
           {

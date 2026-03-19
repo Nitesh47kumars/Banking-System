@@ -90,7 +90,7 @@ const Dashboard = () => {
             </div>
             <div className="grid lg:grid-cols-3 gap-6">
               <RecentTransactions transactions={transactions} />
-              <AccountCard user={user} />
+              <AccountCard user={user} account={account._id} />
             </div>
             <QuickActions />
           </>

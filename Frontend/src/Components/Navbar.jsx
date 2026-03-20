@@ -3,7 +3,7 @@ import { RiBankLine, RiLogoutBoxLine } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { getUser, logout } from "../redux/authSlice";
 import NavbarLoader from "../utils/NavbarLoader";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const { user, authChecked } = useSelector((state) => state.auth);
@@ -27,14 +27,14 @@ const Navbar = () => {
   return (
     <header className="sticky top-0 z-40 border-b border-white/5 bg-[#0a0a0b]/90 backdrop-blur-md px-6 py-3.5 flex items-center justify-between">
       {/* Logo */}
-      <div className="flex items-center gap-2.5">
+      <Link to="/" className="flex items-center gap-2.5">
         <div className="w-8 h-8 bg-amber-400 rounded-lg grid place-items-center">
           <RiBankLine size={15} className="text-black" />
         </div>
         <span className="font-bold text-white text-base tracking-tight">
-          BankX
+          Bank System
         </span>
-      </div>
+      </Link>
 
       {/* Right Side */}
       <div className="flex items-center gap-3">

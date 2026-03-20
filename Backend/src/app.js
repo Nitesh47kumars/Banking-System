@@ -6,10 +6,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: [
-      "https://banking-system-ten-zeta.vercel.app",
-      "http://localhost:5173",
-    ],
+    origin: "https://banking-system-ten-zeta.vercel.app",
     credentials: true,
   })
 );

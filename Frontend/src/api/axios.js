@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.BASE_URL,
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
 });
 
@@ -48,5 +48,5 @@ export const CreateUserInitialFunds = (data) => {
 };
 
 export const makeTransaction = (data) => {
-  return api.post("api/transactions/", data);
+  return api.post("/api/transactions/", data);
 };

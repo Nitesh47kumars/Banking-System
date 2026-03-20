@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import HeroSection from "./HeroSection";
 import FeatureSection from "./FeatureSection";
 import HowItWorks from "./HowItWorks";
-import CTABanner from "./CtaBanner";
+import CTABanner from "./CTABanner";
 import HomeFooter from "./HomeFooter";
 import HomeSkeletonLoader from "../../utils/HomeSkeletonLoader";
 

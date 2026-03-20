@@ -46,12 +46,11 @@ export default function Register() {
     }
 
     try {
-      await dispatch(register(form)).unwrap();
+      await dispatch(register(form));
 
       navigate("/dashboard");
     } catch (err) {
-      console.log("MESSAGE:", err);
-    }
+      setErrors({ message: err?.message || "Something went wrong. Please try again." });    }
   };
 
   return (
@@ -155,6 +154,10 @@ export default function Register() {
 
             {errors.confirmPassword && (
               <p className="text-red-400 text-sm">{errors.confirmPassword}</p>
+            )}
+
+            {errors.message && (
+              <p className="text-red-400 text-sm">{errors.message}</p>
             )}
 
             <button

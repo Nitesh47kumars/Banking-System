@@ -15,8 +15,8 @@ export const register = createAsyncThunk(
       const res = await registerUser(formData);
       return res.data.data;
     } catch (err) {
-      console.log(err);
-      return thunkAPI.rejectWithValue(err);
+      console.log(err.response?.data);
+      return thunkAPI.rejectWithValue(err.response?.data);
     }
   }
 );
@@ -68,7 +68,7 @@ const authSlice = createSlice({
       .addCase(register.pending, (state) => {
         state.loading = true;
       })
-      .addCase(register.fulfilled, (state, action) => {
+      .addCase(register.fulfilled, (state) => {
         state.loading = false;
       })
       .addCase(register.rejected, (state, action) => {

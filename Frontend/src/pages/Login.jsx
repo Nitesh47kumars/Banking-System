@@ -50,7 +50,7 @@ const Login = () => {
   };
 
   return (
-    <section className="flex items-center justify-center min-h-screen bg-[#0a0a0b] p-4">
+    <section className="flex items-center justify-center min-h-[90vh] bg-[#0a0a0b] p-4">
       <div className="flex w-full max-w-5xl rounded-2xl overflow-hidden border border-white/10 bg-white/5">
         {/* LEFT PANEL */}
         <div className="hidden md:flex w-2/5 bg-[#0f0f11] text-white p-10 flex-col justify-center border-r border-white/10">
@@ -152,7 +152,7 @@ const Login = () => {
 
             <p className="text-sm text-center mt-6 text-white/50">
               Don't have an account?{" "}
-              <Link to="/register" className="text-amber-400 font-semibold">
+              <Link to="/register" className="text-amber-400 font-semibold hover:underline">
                 Register
               </Link>
             </p>

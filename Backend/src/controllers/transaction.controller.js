@@ -299,8 +299,6 @@ const getTransactionHistory = asyncHandler(async (req, res) => {
     .sort({ createdAt: -1 })
     .populate("transaction");
 
-  console.log(history);
-
   res
     .status(200)
     .json(new ApiResponse(200, history, "History fetched successfully"));

@@ -55,7 +55,7 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0a0a0b] p-4">
+    <div className="min-h-[90vh] flex items-center justify-center bg-[#0a0a0b] p-4">
       <div className="flex w-full max-w-5xl rounded-2xl overflow-hidden border border-white/10 bg-white/5">
         {/* LEFT PANEL */}
         <div className="hidden md:flex w-2/5 bg-[#0f0f11] text-white p-10 flex-col justify-center border-r border-white/10">

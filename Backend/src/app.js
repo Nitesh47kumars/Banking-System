@@ -6,7 +6,10 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "https://banking-system-ten-zeta.vercel.app",
+      "http://localhost:5173",
+    ],
     credentials: true,
   })
 );
@@ -31,7 +34,6 @@ import transactionRoutes from "./routes/transaction.routes.js";
 app.use("/api/auth", authRouter);
 app.use("/api/account", accountRouter);
 app.use("/api/transactions", transactionRoutes);
-
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;

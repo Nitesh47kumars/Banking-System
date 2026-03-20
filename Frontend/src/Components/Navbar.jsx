@@ -6,7 +6,7 @@ import NavbarLoader from "../utils/NavbarLoader";
 import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
-  const { user, loading } = useSelector((state) => state.auth);
+  const { user, authChecked } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -38,7 +38,7 @@ const Navbar = () => {
 
       {/* Right Side */}
       <div className="flex items-center gap-3">
-        {loading ? (
+        {!authChecked ? (
           <NavbarLoader />
         ) : user ? (
           <>

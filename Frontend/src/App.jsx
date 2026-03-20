@@ -14,10 +14,12 @@ import RoleRoute from "./ProtectedRoutes/Transaction/RoleRoute";
 import CreateInitialFunds from "./ProtectedRoutes/Transaction/createInitialFunds";
 import AllTransactions from "./ProtectedRoutes/Transaction/TransactionHistory/AllTransactions";
 import MoreOptions from "./ProtectedRoutes/MoreOptions";
+import ErrorPage from "./pages/ErrorPage";
 const router = createBrowserRouter([
   {
     path: "/",
     element: <MainLayout />,
+    errorElement: <ErrorPage/>,
     children: [
       {
         index: true,

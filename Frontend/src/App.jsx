@@ -3,7 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import Register from "./pages/Register";
 import Login from "./pages/Login";
-import Home from "./pages/Home";
+import Home from "./pages/HomePage/Home";
 import Dashboard from "./ProtectedRoutes/Dashboard/Dashboard";
 
 import ProtectedRoute from "./ProtectedRoutes/ProtectedRoute";
